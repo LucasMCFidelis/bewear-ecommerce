@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import PasswordInput from "./passwordInput";
+
 const formSchema = z
   .object({
     name: z.string("Nome inválido.").trim().min(1, "Nome é obrigatório."),
@@ -102,9 +104,8 @@ const SignUpForm = () => {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input
+                      <PasswordInput
                         placeholder="Digite sua senha"
-                        type="password"
                         {...field}
                       />
                     </FormControl>
@@ -119,9 +120,8 @@ const SignUpForm = () => {
                   <FormItem>
                     <FormLabel>Confirme sua senha</FormLabel>
                     <FormControl>
-                      <Input
+                      <PasswordInput
                         placeholder="Digite a sua senha novamente"
-                        type="password"
                         {...field}
                       />
                     </FormControl>
