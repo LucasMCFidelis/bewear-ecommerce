@@ -24,7 +24,7 @@ const PasswordInput = ({ ...rest }: InputHTMLAttributes<HTMLInputElement>) => {
         type="button"
         variant={"ghost"}
         onClick={toggleShowPassword}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2"
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:bg-transparent"
         aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
       >
         {showPassword ? <EyeClosed /> : <Eye />}
