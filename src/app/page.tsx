@@ -1,11 +1,17 @@
+import { asc } from "drizzle-orm";
 import Image from "next/image";
 
+import CategorySelector from "@/components/common/category-selector";
 import ProductsList from "@/components/common/products-list";
 import { db } from "@/db";
+import { categoryTable } from "@/db/schema";
 
 export default async function Home() {
   const products = await db.query.productTable.findMany({
     with: { variants: true },
+  });
+  const categories = await db.query.categoryTable.findMany({
+    orderBy: [asc(categoryTable.name)],
   });
 
   return (
@@ -20,6 +26,8 @@ export default async function Home() {
       />
 
       <ProductsList products={products} title="Mais vendidos" />
+
+      <CategorySelector categories={categories} />
 
       <Image
         src={"/banner-02.png"}
