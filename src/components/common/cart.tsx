@@ -41,13 +41,7 @@ const Cart = () => {
             <CartItem
               key={item.id}
               cartItemId={item.id}
-              productName={item.productVariant.product.name}
-              productVariantName={item.productVariant.name}
-              productVariantImageUrl={item.productVariant.imageUrl}
-              productVariantPriceInCents={item.productVariant.priceInCents}
-              productVariantQuantityInStock={
-                item.productVariant.quantityInStock
-              }
+              productVariant={item.productVariant}
               quantity={item.quantity}
             />
           ))}
@@ -62,7 +56,9 @@ const Cart = () => {
           <Button size={"lg"} className="rounded-full">
             Finalizar a compra
           </Button>
-          <Button variant={"link"} className="text-secondary">Continuar comprando</Button>
+          <Button variant={"link"} className="text-secondary-foreground">
+            Continuar comprando
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -11,30 +11,31 @@ import {
 import Image from "next/image";
 import { toast } from "sonner";
 
+import { addProductToCart } from "@/actions/add-cart-product";
 import decreaseCartProductQuantity from "@/actions/decrease-cart-product-quantity";
 import { removeProductFromCart } from "@/actions/remove-cart-product";
+import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 
 import { Button } from "../ui/button";
 
 interface CartItemProps {
   cartItemId: string;
-  productName: string;
-  productVariantName: string;
-  productVariantImageUrl: string;
-  productVariantPriceInCents: number;
-  productVariantQuantityInStock: number;
+  productVariant: typeof productVariantTable.$inferSelect & {
+    product: typeof productTable.$inferSelect;
+  };
   quantity: number;
 }
 
-const CartItem = ({
-  cartItemId,
-  productName,
-  productVariantName,
-  productVariantImageUrl,
-  productVariantPriceInCents,
-  quantity,
-}: CartItemProps) => {
+const CartItem = ({ cartItemId, productVariant, quantity }: CartItemProps) => {
+  const {
+    id: productVariantId,
+    name: productVariantName,
+    imageUrl: productVariantImageUrl,
+    priceInCents: productVariantPriceInCents,
+    quantityInStock: quantityMax,
+  } = productVariant;
+
   const queryClient = useQueryClient();
   const removeProductFromCartMutation = useMutation({
     mutationKey: ["remove-cart-product", cartItemId],
@@ -69,7 +70,27 @@ const CartItem = ({
         toast.success("Quantidade do produto reduzida.");
       },
       onError: () => {
-        toast.error("Erro ao reduzir quantidade fo produto.");
+        toast.error("Erro ao reduzir quantidade do produto.");
+      },
+    });
+  };
+
+  const increaseCartProductQuantityMutation = useMutation({
+    mutationKey: ["increase-cart-product-quantity", cartItemId],
+    mutationFn: () =>
+      addProductToCart({ productVariantId: productVariantId, quantity: 1 }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  const handleIncreaseQuantityClick = () => {
+    increaseCartProductQuantityMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Quantidade do produto aumentada.");
+      },
+      onError: () => {
+        toast.error("Erro ao aumentar quantidade do produto.");
       },
     });
   };
@@ -85,7 +106,7 @@ const CartItem = ({
           className="rounded-lg"
         />
         <div className="flex flex-col gap-1">
-          <p className="text-sm font-semibold">{productName}</p>
+          <p className="text-sm font-semibold">{productVariant.product.name}</p>
           <p className="text-muted-foreground text-xs font-medium">
             {productVariantName}
           </p>
@@ -98,7 +119,12 @@ const CartItem = ({
               {quantity === 1 ? <Trash2Icon /> : <MinusIcon />}
             </Button>
             <p className="text-xs font-medium">{quantity}</p>
-            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+            <Button
+              className="h-4 w-4"
+              variant="ghost"
+              onClick={handleIncreaseQuantityClick}
+              disabled={quantity === quantityMax}
+            >
               <PlusIcon />
             </Button>
           </div>
