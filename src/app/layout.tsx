@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
+import ReactQueryProvider from "@/providers/react-query";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +33,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <Header />
-        <div className="flex-1">
-          {children}
-          <Toaster />
-        </div>
-        <Footer />
+        <ReactQueryProvider>
+          <Header />
+          <div className="flex-1">
+            {children}
+            <Toaster />
+          </div>
+          <Footer />
+        </ReactQueryProvider>
       </body>
     </html>
   );

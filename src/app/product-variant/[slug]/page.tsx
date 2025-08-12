@@ -8,7 +8,9 @@ import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 
-import QuantitySelector from "./components/quantity-selector";
+import AddToCartButton from "./components/add-to-cart-button";
+import QuantitySelector from "./components/product-actions";
+import ProductActions from "./components/product-actions";
 import VariantSelector from "./components/variant-selector";
 
 interface ProductPageProps {
@@ -59,16 +61,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
           </h2>
         </div>
 
-        <QuantitySelector quantityMax={productVariant.quantityInStock}/>
-
-        <div className="space-y-4 flex flex-col">
-          <Button className="rounded-full" variant={"outline"}>
-            Adicionar à sacola
-          </Button>
-          <Button className="rounded-full" size={"lg"}>
-            Comprar Agora
-          </Button>
-        </div>
+        <ProductActions productVariant={productVariant} />
 
         <p className="text-sm">{productVariant.product.description}</p>
 
