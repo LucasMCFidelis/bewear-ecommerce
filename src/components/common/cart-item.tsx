@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import { toast } from "sonner";
 
+import decreaseCartProductQuantity from "@/actions/decrease-cart-product-quantity";
 import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { formatCentsToBRL } from "@/helpers/money";
 
@@ -54,6 +55,25 @@ const CartItem = ({
     });
   };
 
+  const decreaseCartProductQuantityMutation = useMutation({
+    mutationKey: ["decrease-cart-product-quantity", cartItemId],
+    mutationFn: () => decreaseCartProductQuantity({ cartItemId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  const handleDecreaseQuantityClick = () => {
+    decreaseCartProductQuantityMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Quantidade do produto reduzida.");
+      },
+      onError: () => {
+        toast.error("Erro ao reduzir quantidade fo produto.");
+      },
+    });
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -70,7 +90,11 @@ const CartItem = ({
             {productVariantName}
           </p>
           <div className="flex w-[100px] items-center justify-between rounded-lg border p-1">
-            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+            <Button
+              className="h-4 w-4"
+              variant="ghost"
+              onClick={handleDecreaseQuantityClick}
+            >
               {quantity === 1 ? <Trash2Icon /> : <MinusIcon />}
             </Button>
             <p className="text-xs font-medium">{quantity}</p>
