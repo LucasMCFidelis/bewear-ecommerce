@@ -40,6 +40,7 @@ const Cart = () => {
           {cart?.items.map((item) => (
             <CartItem
               key={item.id}
+              cartItemId={item.id}
               productName={item.productVariant.product.name}
               productVariantName={item.productVariant.name}
               productVariantImageUrl={item.productVariant.imageUrl}
@@ -47,7 +48,7 @@ const Cart = () => {
               productVariantQuantityInStock={
                 item.productVariant.quantityInStock
               }
-              quantityInitial={item.quantity}
+              quantity={item.quantity}
             />
           ))}
         </div>

@@ -1,33 +1,58 @@
 "use client";
 
-import { TrashIcon } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Loader2,
+  MinusIcon,
+  PlusIcon,
+  Trash2Icon,
+  TrashIcon,
+} from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { toast } from "sonner";
 
-import { QuantitySelector } from "@/app/product-variant/[slug]/components/product-actions";
+import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { formatCentsToBRL } from "@/helpers/money";
 
 import { Button } from "../ui/button";
 
 interface CartItemProps {
+  cartItemId: string;
   productName: string;
   productVariantName: string;
   productVariantImageUrl: string;
   productVariantPriceInCents: number;
   productVariantQuantityInStock: number;
-  quantityInitial: number;
+  quantity: number;
 }
 
 const CartItem = ({
+  cartItemId,
   productName,
   productVariantName,
   productVariantImageUrl,
   productVariantPriceInCents,
-  productVariantQuantityInStock,
-  quantityInitial,
+  quantity,
 }: CartItemProps) => {
-  const [quantityCurrent, setQuantityCurrent] =
-    useState<number>(quantityInitial);
+  const queryClient = useQueryClient();
+  const removeProductFromCartMutation = useMutation({
+    mutationKey: ["remove-cart-product", cartItemId],
+    mutationFn: () => removeProductFromCart({ cartItemId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  const handleDeleteClick = () => {
+    removeProductFromCartMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Produto removido do carrinho.");
+      },
+      onError: () => {
+        toast.error("Erro ao remover produto do carrinho.");
+      },
+    });
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -44,19 +69,34 @@ const CartItem = ({
           <p className="text-muted-foreground text-xs font-medium">
             {productVariantName}
           </p>
-          <QuantitySelector
-            quantityState={quantityCurrent}
-            setQuantityState={setQuantityCurrent}
-            quantityMax={productVariantQuantityInStock}
-          />
+          <div className="flex w-[100px] items-center justify-between rounded-lg border p-1">
+            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+              {quantity === 1 ? <Trash2Icon /> : <MinusIcon />}
+            </Button>
+            <p className="text-xs font-medium">{quantity}</p>
+            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+              <PlusIcon />
+            </Button>
+          </div>
         </div>
       </div>
       <div className="flex flex-col items-end justify-center gap-2">
-        <Button variant="outline" size="icon">
-          <TrashIcon />
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleDeleteClick}
+          disabled={removeProductFromCartMutation.isPending}
+        >
+          {removeProductFromCartMutation.isPending ? (
+            <>
+              <Loader2 className="mr-1 animate-spin" />
+            </>
+          ) : (
+            <TrashIcon />
+          )}
         </Button>
         <p className="text-sm font-bold">
-          {formatCentsToBRL((productVariantPriceInCents *  quantityCurrent))}
+          {formatCentsToBRL(productVariantPriceInCents * quantity)}
         </p>
       </div>
     </div>
