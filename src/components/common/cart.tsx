@@ -1,5 +1,8 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { ShoppingBagIcon } from "lucide-react";
+import { useState } from "react";
 
 import { getCart } from "@/actions/get-cart";
 import { formatCentsToBRL } from "@/helpers/money";
@@ -16,13 +19,14 @@ import {
 import CartItem from "./cart-item";
 
 const Cart = () => {
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const { data: cart, isPending: cartIsLoading } = useQuery({
     queryKey: ["cart"],
     queryFn: () => getCart(),
   });
 
   return (
-    <Sheet>
+    <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetTrigger asChild>
         <Button variant={"outline"} size={"icon"}>
           <ShoppingBagIcon />
@@ -50,13 +54,17 @@ const Cart = () => {
           <div className="flex justify-between text-sm ">
             <p className="font-semibold">Subtotal</p>
             <p className="text-muted-foreground font-medium">
-              {formatCentsToBRL(1000000)}
+              {formatCentsToBRL(cart?.totalPriceInCents || 0)}
             </p>
           </div>
           <Button size={"lg"} className="rounded-full">
             Finalizar a compra
           </Button>
-          <Button variant={"link"} className="text-secondary-foreground">
+          <Button
+            variant={"link"}
+            className="text-secondary-foreground"
+            onClick={() => setIsCartOpen(false)}
+          >
             Continuar comprando
           </Button>
         </SheetFooter>
