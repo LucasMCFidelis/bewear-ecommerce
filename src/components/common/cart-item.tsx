@@ -35,8 +35,7 @@ const CartItem = ({ cartItemId, productVariant, quantity }: CartItemProps) => {
     quantityInStock: quantityMax,
   } = productVariant;
 
-  const removeProductFromCartMutation =
-    useRemoveProductFromCart(productVariantId);
+  const removeProductFromCartMutation = useRemoveProductFromCart(cartItemId);
   const decreaseCartProductQuantityMutation =
     useDecreaseCartProduct(cartItemId);
   const increaseCartProductQuantityMutation =
