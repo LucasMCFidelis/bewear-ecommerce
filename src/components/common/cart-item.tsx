@@ -76,12 +76,12 @@ const CartItem = ({ cartItemId, productVariant, quantity }: CartItemProps) => {
 
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <Image
           src={productVariantImageUrl}
           alt={productVariantName}
-          width={86}
-          height={86}
+          width={82}
+          height={82}
           className="rounded-lg"
         />
         <div className="flex flex-col gap-1">
