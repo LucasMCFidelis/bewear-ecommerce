@@ -23,14 +23,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { shippingAddressTable } from "@/db/schema";
 import { formatAddress } from "@/helpers/address";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-address";
 
-const Addresses = () => {
+interface AddressesProps {
+  shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
+}
+
+const Addresses = ({ shippingAddresses }: AddressesProps) => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const createShippingAddressMutation = useCreateShippingAddress();
-  const { data: addresses, isPending: isAddressesPending } = useUserAddresses();
+  const { data: addresses, isPending: isAddressesPending } = useUserAddresses({initialData: shippingAddresses});
 
   const form = useForm<CreateShippingAddressSchema>({
     resolver: zodResolver(createShippingAddressSchema),
@@ -51,8 +56,9 @@ const Addresses = () => {
 
   const onSubmit = async (values: CreateShippingAddressSchema) => {
     try {
-      const newAddress = await createShippingAddressMutation.mutateAsync(values);
-      setSelectedAddress(newAddress.id)
+      const newAddress =
+        await createShippingAddressMutation.mutateAsync(values);
+      setSelectedAddress(newAddress.id);
       toast.success("Endereço criado com sucesso!");
       form.reset();
     } catch (error) {
