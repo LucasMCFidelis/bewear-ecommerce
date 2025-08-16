@@ -14,12 +14,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { shippingAddressTable } from "@/db/schema";
-import { formatAddress } from "@/helpers/address";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-address";
 
 import AddressForm from "./address-form";
+import AddressItem from "./address-item";
 
 interface AddressesProps {
   shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
@@ -114,15 +114,7 @@ const Addresses = ({
                 <CardContent>
                   <div className="flex items-start space-x-2">
                     <RadioGroupItem value={address.id} id={address.id} />
-                    <div className="flex-1">
-                      <Label htmlFor={address.id} className="cursor-pointer">
-                        <div>
-                          <p className="text-sm">
-                            {formatAddress({ address })}
-                          </p>
-                        </div>
-                      </Label>
-                    </div>
+                    <AddressItem key={address.id} address={address} functionChangeSelectedAddress={setSelectedAddress} />
                   </div>
                 </CardContent>
               </Card>
