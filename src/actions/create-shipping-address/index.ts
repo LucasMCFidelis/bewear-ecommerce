@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { db } from "@/db";
@@ -12,7 +13,7 @@ import {
 } from "./schema";
 
 export const createShippingAddress = async (
-  data: CreateShippingAddressSchema,
+  data: CreateShippingAddressSchema
 ) => {
   createShippingAddressSchema.parse(data);
 
@@ -42,6 +43,8 @@ export const createShippingAddress = async (
       cpfOrCnpj: data.cpf,
     })
     .returning();
+
+  revalidatePath("/cart/identification");
 
   return shippingAddress;
 };
