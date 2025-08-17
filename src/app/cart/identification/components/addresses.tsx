@@ -114,7 +114,11 @@ const Addresses = ({
                 <CardContent>
                   <div className="flex items-start space-x-2">
                     <RadioGroupItem value={address.id} id={address.id} />
-                    <AddressItem key={address.id} address={address} functionChangeSelectedAddress={setSelectedAddress} />
+                    <AddressItem
+                      key={address.id}
+                      address={address}
+                      functionChangeSelectedAddress={setSelectedAddress}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -153,7 +157,7 @@ const Addresses = ({
               updateCartShippingAddressMutation.isPending
             }
             onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-4 space-y-4"
+            className="mt-4"
           />
         )}
       </CardContent>

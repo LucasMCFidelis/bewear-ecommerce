@@ -13,16 +13,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface AddressFormProps extends FormHTMLAttributes<HTMLFormElement> {
   form: UseFormReturn<CreateShippingAddressSchema>;
-  isLoading?: boolean
+  isLoading?: boolean;
 }
 
 const AddressForm = ({ form, isLoading, ...rest }: AddressFormProps) => {
   return (
     <Form {...form}>
-      <form {...rest}>
+      <form {...rest} className={cn("space-y-4", rest.className)}>
         <div className="grid gap-4 md:grid-cols-2">
           <FormField
             control={form.control}
@@ -197,14 +198,8 @@ const AddressForm = ({ form, isLoading, ...rest }: AddressFormProps) => {
           />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading
-            ? "Salvando..."
-            : "Salvar endereço"}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Salvando..." : "Salvar endereço"}
         </Button>
       </form>
     </Form>
