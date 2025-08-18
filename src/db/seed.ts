@@ -282,8 +282,16 @@ const products = [
     description:
       "Mochila resistente e confortável, ideal para o dia a dia e viagens.",
     categoryName: "Acessórios",
+    widthInCentimeters: 30,
+    heightInCentimeters: 40,
+    lengthInCentimeters: 15,
+    weightInGrams: 500,
     variants: [
-      { color: "Preta", price: 12999 },
+      {
+        color: "Preta",
+        price: 12999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Branca", price: 12999 },
     ],
   },
@@ -291,17 +299,37 @@ const products = [
     name: "Meia Alta",
     description: "Meia alta de algodão, confortável e durável.",
     categoryName: "Acessórios",
+    widthInCentimeters: 10,
+    heightInCentimeters: 20,
+    lengthInCentimeters: 5,
+    weightInGrams: 100,
     variants: [
-      { color: "Branca", price: 1999 },
-      { color: "Preta", price: 1999 },
+      {
+        color: "Branca",
+        price: 1999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Preta",
+        price: 1999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
     name: "Boné Nocta",
     description: "Boné Nocta com design moderno e ajuste confortável.",
     categoryName: "Acessórios",
+    widthInCentimeters: 20,
+    heightInCentimeters: 15,
+    lengthInCentimeters: 20,
+    weightInGrams: 200,
     variants: [
-      { color: "Preto", price: 8999 },
+      {
+        color: "Preto",
+        price: 8999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Vinho", price: 8999 },
       { color: "Azul", price: 8999 },
     ],
@@ -310,10 +338,22 @@ const products = [
     name: "Boné Curvo",
     description: "Boné com aba curva, estilo clássico e versátil.",
     categoryName: "Acessórios",
+    widthInCentimeters: 20,
+    heightInCentimeters: 15,
+    lengthInCentimeters: 20,
+    weightInGrams: 200,
     variants: [
-      { color: "Azul", price: 7999 },
+      {
+        color: "Azul",
+        price: 7999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Bege", price: 7999 },
-      { color: "Verde", price: 7999 },
+      {
+        color: "Verde",
+        price: 7999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
 
@@ -323,16 +363,36 @@ const products = [
     description:
       "Shorts esportivo para atividades físicas, com tecido que absorve o suor.",
     categoryName: "Bermuda & Shorts",
+    widthInCentimeters: 30,
+    heightInCentimeters: 40,
+    lengthInCentimeters: 25,
+    weightInGrams: 300,
     variants: [
-      { color: "Preto", price: 6999 },
-      { color: "Azul", price: 6999 },
-      { color: "Verde", price: 6999 },
+      {
+        color: "Preto",
+        price: 6999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 6999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Verde",
+        price: 6999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
     name: "Shorts Core",
     description: "Shorts casual confortável, perfeito para o dia a dia.",
     categoryName: "Bermuda & Shorts",
+    widthInCentimeters: 30,
+    heightInCentimeters: 40,
+    lengthInCentimeters: 25,
+    weightInGrams: 300,
     variants: [
       { color: "Verde", price: 5999 },
       { color: "Preto", price: 5999 },
@@ -344,9 +404,17 @@ const products = [
     description:
       "Shorts com design moderno e confortável, ideal para diversas ocasiões.",
     categoryName: "Bermuda & Shorts",
+    widthInCentimeters: 30,
+    heightInCentimeters: 40,
+    lengthInCentimeters: 25,
+    weightInGrams: 300,
     variants: [
       { color: "Marrom", price: 7499 },
-      { color: "Preto", price: 7499 },
+      {
+        color: "Preto",
+        price: 7499,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Bege", price: 7499 },
     ],
   },
@@ -355,8 +423,16 @@ const products = [
     description:
       "Bermuda premium com qualidade superior e design diferenciado.",
     categoryName: "Bermuda & Shorts",
+    widthInCentimeters: 30,
+    heightInCentimeters: 40,
+    lengthInCentimeters: 25,
+    weightInGrams: 300,
     variants: [
-      { color: "Verde", price: 8999 },
+      {
+        color: "Verde",
+        price: 8999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Preta", price: 8999 },
       { color: "Azul", price: 8999 },
     ],
@@ -368,10 +444,26 @@ const products = [
     description:
       "Calça esportiva Nike Club, confortável e versátil para treinos e uso casual.",
     categoryName: "Calças",
+    widthInCentimeters: 30,
+    heightInCentimeters: 100,
+    lengthInCentimeters: 30,
+    weightInGrams: 400,
     variants: [
-      { color: "Bege", price: 15999 },
-      { color: "Preta", price: 15999 },
-      { color: "Vinho", price: 15999 },
+      {
+        color: "Bege",
+        price: 15999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Preta",
+        price: 15999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Vinho",
+        price: 15999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
@@ -379,10 +471,26 @@ const products = [
     description:
       "Calça de malha com tecido macio e confortável, ideal para relaxar.",
     categoryName: "Calças",
+    widthInCentimeters: 30,
+    heightInCentimeters: 100,
+    lengthInCentimeters: 30,
+    weightInGrams: 400,
     variants: [
-      { color: "Preta", price: 12999 },
-      { color: "Branca", price: 12999 },
-      { color: "Azul", price: 12999 },
+      {
+        color: "Preta",
+        price: 12999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Branca",
+        price: 12999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 12999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
@@ -390,8 +498,16 @@ const products = [
     description:
       "Calça com design urbano e moderno, perfeita para o street style.",
     categoryName: "Calças",
+    widthInCentimeters: 30,
+    heightInCentimeters: 100,
+    lengthInCentimeters: 30,
+    weightInGrams: 400,
     variants: [
-      { color: "Bege", price: 13999 },
+      {
+        color: "Bege",
+        price: 13999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Branca", price: 13999 },
       { color: "Preta", price: 13999 },
     ],
@@ -401,10 +517,26 @@ const products = [
     description:
       "Calça Jordan com qualidade premium e design icônico da marca.",
     categoryName: "Calças",
+    widthInCentimeters: 30,
+    heightInCentimeters: 100,
+    lengthInCentimeters: 30,
+    weightInGrams: 400,
     variants: [
-      { color: "Verde", price: 18999 },
-      { color: "Preta", price: 18999 },
-      { color: "Azul", price: 18999 },
+      {
+        color: "Verde",
+        price: 18999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Preta",
+        price: 18999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 18999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
 
@@ -414,6 +546,10 @@ const products = [
     description:
       "Camiseta ACG com design técnico e material de alta qualidade.",
     categoryName: "Camisetas",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 200,
     variants: [
       { color: "Bege", price: 6999 },
       { color: "Preta", price: 6999 },
@@ -425,9 +561,17 @@ const products = [
     description:
       "Camiseta para corrida com tecido respirável e conforto superior.",
     categoryName: "Camisetas",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 200,
     variants: [
       { color: "Preta", price: 5999 },
-      { color: "Azul", price: 5999 },
+      {
+        color: "Azul",
+        price: 5999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
@@ -435,8 +579,16 @@ const products = [
     description:
       "Camiseta esportiva para atividades físicas com tecnologia Dri-FIT.",
     categoryName: "Camisetas",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 200,
     variants: [
-      { color: "Branca", price: 5499 },
+      {
+        color: "Branca",
+        price: 5499,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
       { color: "Preta", price: 5499 },
     ],
   },
@@ -445,9 +597,21 @@ const products = [
     description:
       "Camiseta com estampa inspirada na natureza, confortável e estilosa.",
     categoryName: "Camisetas",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 200,
     variants: [
-      { color: "Preta", price: 6499 },
-      { color: "Azul", price: 6499 },
+      {
+        color: "Preta",
+        price: 6499,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 6499,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
 
@@ -457,9 +621,21 @@ const products = [
     description:
       "Jaqueta corta-vento leve e resistente, ideal para atividades ao ar livre.",
     categoryName: "Jaquetas & Moletons",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 500,
     variants: [
-      { color: "Preto", price: 19999 },
-      { color: "Branco", price: 19999 },
+      {
+        color: "Preto",
+        price: 19999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Branco",
+        price: 19999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
@@ -467,9 +643,21 @@ const products = [
     description:
       "Jaqueta Windrunner com design clássico e proteção contra o vento.",
     categoryName: "Jaquetas & Moletons",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 500,
     variants: [
-      { color: "Azul", price: 22999 },
-      { color: "Bege", price: 22999 },
+      {
+        color: "Azul",
+        price: 22999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Bege",
+        price: 22999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
@@ -477,18 +665,42 @@ const products = [
     description:
       "Jaqueta com estilo urbano e moderno, perfeita para compor looks casuais.",
     categoryName: "Jaquetas & Moletons",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 500,
     variants: [
-      { color: "Marrom", price: 17999 },
-      { color: "Cinza", price: 17999 },
+      {
+        color: "Marrom",
+        price: 17999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Cinza",
+        price: 17999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
     name: "Jaqueta Nike Club",
     description: "Jaqueta Nike Club com qualidade premium e design atemporal.",
     categoryName: "Jaquetas & Moletons",
+    widthInCentimeters: 30,
+    heightInCentimeters: 70,
+    lengthInCentimeters: 20,
+    weightInGrams: 500,
     variants: [
-      { color: "Azul", price: 25999 },
-      { color: "Amarela", price: 25999 },
+      {
+        color: "Azul",
+        price: 25999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Amarela",
+        price: 25999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
 
@@ -498,20 +710,52 @@ const products = [
     description:
       "Tênis Nike Vomero com tecnologia de amortecimento superior para corridas.",
     categoryName: "Tênis",
+    widthInCentimeters: 30,
+    heightInCentimeters: 15,
+    lengthInCentimeters: 40,
+    weightInGrams: 300,
     variants: [
-      { color: "Preto", price: 79999 },
-      { color: "Branco", price: 79999 },
-      { color: "Azul", price: 79999 },
+      {
+        color: "Preto",
+        price: 79999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Branco",
+        price: 79999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 79999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
     name: "Tênis Nike Panda",
     description: "Tênis Nike com design Panda icônico, confortável e estiloso.",
     categoryName: "Tênis",
+    widthInCentimeters: 30,
+    heightInCentimeters: 15,
+    lengthInCentimeters: 40,
+    weightInGrams: 300,
     variants: [
-      { color: "Verde", price: 69999 },
-      { color: "Azul", price: 69999 },
-      { color: "Preto", price: 69999 },
+      {
+        color: "Verde",
+        price: 69999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 69999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Preto",
+        price: 69999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
@@ -519,19 +763,47 @@ const products = [
     description:
       "Tênis Nike Air Force 1, um clássico atemporal com design icônico.",
     categoryName: "Tênis",
+    widthInCentimeters: 30,
+    heightInCentimeters: 15,
+    lengthInCentimeters: 40,
+    weightInGrams: 300,
     variants: [
-      { color: "Preto", price: 89999 },
-      { color: "Branco", price: 89999 },
+      {
+        color: "Preto",
+        price: 89999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Branco",
+        price: 89999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
   {
     name: "Tênis Nike Dunk Low",
     description: "Tênis Nike Dunk Low com design retrô e conforto moderno.",
     categoryName: "Tênis",
+    widthInCentimeters: 30,
+    heightInCentimeters: 15,
+    lengthInCentimeters: 40,
+    weightInGrams: 300,
     variants: [
-      { color: "Branco", price: 75999 },
-      { color: "Preto", price: 75999 },
-      { color: "Azul", price: 75999 },
+      {
+        color: "Branco",
+        price: 75999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Preto",
+        price: 75999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
+      {
+        color: "Azul",
+        price: 75999,
+        quantityInStock: Math.floor(Math.random() * 21),
+      },
     ],
   },
 ];
@@ -585,6 +857,10 @@ async function main() {
         name: productData.name,
         slug: productSlug,
         description: productData.description,
+        heightInCentimeters: productData.heightInCentimeters,
+        widthInCentimeters: productData.widthInCentimeters,
+        lengthInCentimeters: productData.lengthInCentimeters,
+        weightInGrams: productData.weightInGrams,
         categoryId: categoryId,
       });
 
@@ -606,6 +882,7 @@ async function main() {
           color: variantData.color,
           imageUrl: variantImages[0] || "",
           priceInCents: variantData.price,
+          quantityInStock: variantData.quantityInStock || 0,
           slug: generateSlug(`${productData.name}-${variantData.color}`),
         });
       }

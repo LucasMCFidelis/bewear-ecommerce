@@ -95,6 +95,10 @@ export const productTable = pgTable("product", {
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text().notNull(),
+  widthInCentimeters: integer("width_in_centimeters").notNull().default(0),
+  heightInCentimeters: integer("height_in_centimeters").notNull().default(0),
+  lengthInCentimeters: integer("length_in_centimeters").notNull().default(0),
+  weightInGrams: integer("weight_in_grams").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
