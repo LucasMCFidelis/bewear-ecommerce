@@ -52,5 +52,5 @@ export const updateCartShippingAddress = async (
     })
     .where(eq(cartTable.id, cart.id));
 
-  return { success: true };
+  return { success: true, shippingAddressId: data.shippingAddressId };
 };

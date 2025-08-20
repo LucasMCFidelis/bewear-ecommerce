@@ -1,10 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import {
-  updateDataShippingAddress
-} from "@/actions/update-data-shipping-address";
+import { updateDataShippingAddress } from "@/actions/update-data-shipping-address";
 import { UpdateDataShippingAddressSchema } from "@/actions/update-data-shipping-address/schema";
 
+import { getCalculateShippingCostQueryKey } from "../queries/use-calculate-shipping-cost";
 import { getUserAddressesQueryKey } from "../queries/use-user-address";
 
 export const getUpdateDataShippingAddressMutationKey = (
@@ -18,9 +17,12 @@ export const useUpdateDataShippingAddress = (shippingAddressId: string) => {
     mutationKey: getUpdateDataShippingAddressMutationKey(shippingAddressId),
     mutationFn: (data: UpdateDataShippingAddressSchema) =>
       updateDataShippingAddress({ shippingAddressId, data }),
-    onSuccess: () => {
+    onSuccess: (updatedDataShippingAddress) => {
       queryClient.invalidateQueries({
         queryKey: getUserAddressesQueryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getCalculateShippingCostQueryKey(updatedDataShippingAddress.id),
       });
     },
   });

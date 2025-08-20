@@ -7,7 +7,9 @@ import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
+import ShippingAddressProvider from "../address-context";
 import CartSummary from "../components/cart-summary";
+import ButtonGoToPayment from "./components/button-go-to-payment";
 
 const IdentificationPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -36,24 +38,32 @@ const IdentificationPage = async () => {
   );
 
   return (
-    <div className="px-5 space-y-4">
-      <Addresses
-        shippingAddresses={shippingAddresses}
-        defaultShippingAddressId={cart.shippingAddress?.id || null}
-      />
-      <CartSummary
-        subtotalInCents={cartTotalInCents}
-        totalInCents={cartTotalInCents}
-        products={cart.items.map((item) => ({
-          id: item.productVariant.id,
-          name: item.productVariant.product.name,
-          variantName: item.productVariant.name,
-          quantity: item.quantity,
-          priceInCents: item.productVariant.priceInCents,
-          imageUrl: item.productVariant.imageUrl,
-        }))}
-      />
-    </div>
+    <ShippingAddressProvider
+      defaultShippingAddressId={cart.shippingAddress?.id}
+    >
+      <div className="px-5 space-y-4">
+        <Addresses shippingAddresses={shippingAddresses} />
+        <CartSummary
+          subtotalInCents={cartTotalInCents}
+          products={cart.items.map((item) => ({
+            id: item.productVariant.id,
+            name: item.productVariant.product.name,
+            variantName: item.productVariant.name,
+            quantity: item.quantity,
+            widthInCentimeters: item.productVariant.product.widthInCentimeters,
+            heightInCentimeters:
+              item.productVariant.product.heightInCentimeters,
+            lengthInCentimeters:
+              item.productVariant.product.lengthInCentimeters,
+            weightInGrams: item.productVariant.product.weightInGrams,
+            priceInCents: item.productVariant.priceInCents,
+            imageUrl: item.productVariant.imageUrl,
+          }))}
+        >
+          <ButtonGoToPayment />
+        </CartSummary>
+      </div>
+    </ShippingAddressProvider>
   );
 };
 

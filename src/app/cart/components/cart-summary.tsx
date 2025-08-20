@@ -1,28 +1,49 @@
+"use client";
+
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatCentsToBRL } from "@/helpers/money";
+import { useCalculateShippingCost } from "@/hooks/queries/use-calculate-shipping-cost";
+
+import { useShippingAddressContext } from "../address-context";
 
 interface CartSummaryProps {
   subtotalInCents: number;
-  totalInCents: number;
   products: Array<{
     id: string;
     name: string;
     variantName: string;
     quantity: number;
     priceInCents: number;
+    widthInCentimeters: number;
+    heightInCentimeters: number;
+    lengthInCentimeters: number;
+    weightInGrams: number;
     imageUrl: string;
   }>;
+  children?: React.ReactNode;
 }
 
 const CartSummary = ({
   subtotalInCents,
-  totalInCents,
   products,
+  children,
 }: CartSummaryProps) => {
+  const { selectedShippingAddress } = useShippingAddressContext();
+
+  const {
+    data,
+    isPending: isLoadingCalculateShippingCost,
+    isError: isErrorInCalculateShippingCost,
+  } = useCalculateShippingCost(selectedShippingAddress);
+
+  const shippingCostInCents = data?.data.freightInCents;
+  const defaultShippingCostInCents = 2000;
+
   return (
     <Card>
       <CardHeader>
@@ -37,13 +58,36 @@ const CartSummary = ({
         </div>
         <div className="flex justify-between">
           <p className="text-sm">Frete</p>
-          <p className="text-muted-foreground text-sm font-medium">GRÁTIS</p>
+          <div className="text-muted-foreground text-sm font-medium">
+            {isLoadingCalculateShippingCost ? (
+              <Loader2 className="mr-1 animate-spin" />
+            ) : (
+              <p>
+                {isErrorInCalculateShippingCost
+                  ? "Erro"
+                  : formatCentsToBRL(
+                      shippingCostInCents || defaultShippingCostInCents
+                    )}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex justify-between">
           <p className="text-sm">Total</p>
-          <p className="text-muted-foreground text-sm font-medium">
-            {formatCentsToBRL(totalInCents)}
-          </p>
+          <div className="text-muted-foreground text-sm font-medium">
+            {isLoadingCalculateShippingCost ? (
+              <Loader2 className="mr-1 animate-spin" />
+            ) : (
+              <p>
+                {isErrorInCalculateShippingCost
+                  ? "Erro"
+                  : formatCentsToBRL(
+                      subtotalInCents +
+                        (shippingCostInCents || defaultShippingCostInCents)
+                    )}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="py-3">
@@ -77,6 +121,7 @@ const CartSummary = ({
             </div>
           </div>
         ))}
+        {children}
       </CardContent>
     </Card>
   );

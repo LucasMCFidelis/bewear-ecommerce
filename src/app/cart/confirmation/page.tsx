@@ -55,23 +55,27 @@ const ConfirmationPage = async () => {
               </p>
             </CardContent>
           </Card>
-          <Button className="w-full rounded-full" size="lg">
-            Finalizar compra
-          </Button>
         </CardContent>
       </Card>
       <CartSummary
         subtotalInCents={cartTotalInCents}
-        totalInCents={cartTotalInCents}
         products={cart.items.map((item) => ({
           id: item.productVariant.id,
           name: item.productVariant.product.name,
           variantName: item.productVariant.name,
           quantity: item.quantity,
+          widthInCentimeters: item.productVariant.product.widthInCentimeters,
+          heightInCentimeters: item.productVariant.product.heightInCentimeters,
+          lengthInCentimeters: item.productVariant.product.lengthInCentimeters,
+          weightInGrams: item.productVariant.product.weightInGrams,
           priceInCents: item.productVariant.priceInCents,
           imageUrl: item.productVariant.imageUrl,
         }))}
-      />
+      >
+        <Button className="w-full rounded-full" size="lg">
+          Finalizar compra
+        </Button>
+      </CartSummary>
     </div>
   );
 };

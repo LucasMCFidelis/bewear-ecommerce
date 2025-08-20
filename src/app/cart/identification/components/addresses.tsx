@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -10,7 +8,6 @@ import {
   CreateShippingAddressSchema,
   createShippingAddressSchema,
 } from "@/actions/create-shipping-address/schema";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -19,22 +16,16 @@ import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-address";
 
+import { useShippingAddressContext } from "../../address-context";
 import AddressForm from "./address-form";
 import AddressItem from "./address-item";
 
 interface AddressesProps {
   shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
-  defaultShippingAddressId: string | null;
 }
 
-const Addresses = ({
-  shippingAddresses,
-  defaultShippingAddressId,
-}: AddressesProps) => {
-  const router = useRouter();
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(
-    defaultShippingAddressId || null
-  );
+const Addresses = ({ shippingAddresses }: AddressesProps) => {
+  const { selectedShippingAddress, setSelectedShippingAddress } = useShippingAddressContext();
   const createShippingAddressMutation = useCreateShippingAddress();
   const { data: addresses, isPending: isAddressesPending } = useUserAddresses({
     initialData: shippingAddresses,
@@ -62,7 +53,7 @@ const Addresses = ({
     try {
       const newAddress =
         await createShippingAddressMutation.mutateAsync(values);
-      setSelectedAddress(newAddress.id);
+      setSelectedShippingAddress(newAddress.id);
       toast.success("Endereço criado com sucesso!");
       form.reset();
 
@@ -76,15 +67,17 @@ const Addresses = ({
     }
   };
 
-  const handleGoToPayment = async () => {
-    if (!selectedAddress || selectedAddress === "add_new") return;
+  const changeShippingAddress = async (newShippingAddress: string | null) => {
+    if (!newShippingAddress) return;
+    if (newShippingAddress === "add_new")
+      return setSelectedShippingAddress(newShippingAddress);
 
     try {
       await updateCartShippingAddressMutation.mutateAsync({
-        shippingAddressId: selectedAddress,
+        shippingAddressId: newShippingAddress,
       });
+      setSelectedShippingAddress(newShippingAddress);
       toast.success("Endereço selecionado para entrega!");
-      router.push("/cart/confirmation");
     } catch (error) {
       toast.error("Erro ao selecionar endereço. Tente novamente.");
       console.error(error);
@@ -101,8 +94,8 @@ const Addresses = ({
           <p className="text-sm">Carregando endereços</p>
         ) : (
           <RadioGroup
-            value={selectedAddress}
-            onValueChange={setSelectedAddress}
+            value={selectedShippingAddress}
+            onValueChange={(value) => changeShippingAddress(value)}
           >
             {addresses?.length === 0 && (
               <div className="py-4 text-center">
@@ -120,7 +113,7 @@ const Addresses = ({
                     <AddressItem
                       key={address.id}
                       address={address}
-                      functionChangeSelectedAddress={setSelectedAddress}
+                      functionChangeSelectedShippingAddress={setSelectedShippingAddress}
                     />
                   </div>
                 </CardContent>
@@ -138,21 +131,7 @@ const Addresses = ({
           </RadioGroup>
         )}
 
-        {selectedAddress && selectedAddress !== "add_new" && (
-          <div className="mt-4">
-            <Button
-              onClick={handleGoToPayment}
-              className="w-full"
-              disabled={updateCartShippingAddressMutation.isPending}
-            >
-              {updateCartShippingAddressMutation.isPending
-                ? "Processando..."
-                : "Ir para pagamento"}
-            </Button>
-          </div>
-        )}
-
-        {selectedAddress === "add_new" && (
+        {selectedShippingAddress === "add_new" && (
           <AddressForm
             form={form}
             isLoading={

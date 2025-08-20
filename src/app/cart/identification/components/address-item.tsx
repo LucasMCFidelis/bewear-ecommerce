@@ -20,12 +20,14 @@ import AddressForm from "./address-form";
 
 interface AddressItemProps {
   address: typeof shippingAddressTable.$inferSelect;
-  functionChangeSelectedAddress: Dispatch<SetStateAction<string | null>>;
+  functionChangeSelectedShippingAddress: Dispatch<
+    SetStateAction<string | null>
+  >;
 }
 
 const AddressItem = ({
   address,
-  functionChangeSelectedAddress,
+  functionChangeSelectedShippingAddress,
 }: AddressItemProps) => {
   const [isOpenUpdateForm, setIsOpenUpdateForm] = useState<boolean>(false);
   const deleteCartShippingAddressMutation = useDeleteCartShippingAddress(
@@ -38,7 +40,7 @@ const AddressItem = ({
   const handleDeleteShippingAddress = async () => {
     try {
       await deleteCartShippingAddressMutation.mutateAsync();
-      functionChangeSelectedAddress(null);
+      functionChangeSelectedShippingAddress(null);
       toast.success("Endereço deletado com sucesso");
     } catch (error) {
       toast.error("Erro ao deletar endereço. Tente novamente");
@@ -69,7 +71,7 @@ const AddressItem = ({
   ) => {
     try {
       await updateDataShippingAddressMutation.mutateAsync(values);
-      functionChangeSelectedAddress(address.id);
+      functionChangeSelectedShippingAddress(address.id);
       closeUpdateForm();
       toast.success("Endereço atualizado com sucesso");
     } catch (error) {
