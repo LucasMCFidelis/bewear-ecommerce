@@ -19,6 +19,7 @@ const ButtonGoToPayment = ({
   const {
     isPending: isLoadingCalculateShippingCost,
     isError: isErrorInCalculateShippingCost,
+    isRefetching: isRefetchingCalculateShippingCost,
   } = useCalculateShippingCost(selectedShippingAddress);
 
   const handleGoToPayment = () => {
@@ -34,6 +35,7 @@ const ButtonGoToPayment = ({
           disabled={
             selectedShippingAddress === "add_new" ||
             isLoadingCalculateShippingCost ||
+            isRefetchingCalculateShippingCost ||
             isErrorInCalculateShippingCost
           }
           className={cn("w-full", className)}

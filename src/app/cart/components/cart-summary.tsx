@@ -39,6 +39,7 @@ const CartSummary = ({
     data,
     isPending: isLoadingCalculateShippingCost,
     isError: isErrorInCalculateShippingCost,
+    isRefetching: isRefetchingCalculateShippingCost
   } = useCalculateShippingCost(selectedShippingAddress);
 
   const shippingCostInCents = data?.data.freightInCents;
@@ -59,7 +60,7 @@ const CartSummary = ({
         <div className="flex justify-between">
           <p className="text-sm">Frete</p>
           <div className="text-muted-foreground text-sm font-medium">
-            {isLoadingCalculateShippingCost ? (
+            {isLoadingCalculateShippingCost || isRefetchingCalculateShippingCost ? (
               <Loader2 className="mr-1 animate-spin" />
             ) : (
               <p>
@@ -75,7 +76,7 @@ const CartSummary = ({
         <div className="flex justify-between">
           <p className="text-sm">Total</p>
           <div className="text-muted-foreground text-sm font-medium">
-            {isLoadingCalculateShippingCost ? (
+            {isLoadingCalculateShippingCost || isRefetchingCalculateShippingCost ? (
               <Loader2 className="mr-1 animate-spin" />
             ) : (
               <p>
