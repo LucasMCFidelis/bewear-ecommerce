@@ -1,10 +1,10 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import { ButtonHTMLAttributes } from "react";
 
 import { addProductToCart } from "@/actions/add-cart-product";
+import LoaderSpin from "@/components/common/loader-spin";
 import { Button } from "@/components/ui/button";
 
 interface AddToCartButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -38,7 +38,7 @@ const AddToCartButton = ({
       >
         {isPending && !isError ? (
           <>
-            Adicionando à sacola <Loader2 className="animate-spin" />
+            Adicionando à sacola <LoaderSpin />
           </>
         ) : (
           <>Adicionar à sacola</>

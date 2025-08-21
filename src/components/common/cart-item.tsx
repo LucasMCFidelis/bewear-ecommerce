@@ -1,11 +1,10 @@
 "use client";
 
 import {
-  Loader2,
   MinusIcon,
   PlusIcon,
   Trash2Icon,
-  TrashIcon,
+  TrashIcon
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -17,6 +16,7 @@ import { useIncreaseCartProduct } from "@/hooks/mutations/use-increase-cart-prod
 import { useRemoveProductFromCart } from "@/hooks/mutations/use-remove-product-from-cart";
 
 import { Button } from "../ui/button";
+import LoaderSpin from "./loader-spin";
 
 interface CartItemProps {
   cartItemId: string;
@@ -118,7 +118,7 @@ const CartItem = ({ cartItemId, productVariant, quantity }: CartItemProps) => {
         >
           {removeProductFromCartMutation.isPending ? (
             <>
-              <Loader2 className="mr-1 animate-spin" />
+              <LoaderSpin />
             </>
           ) : (
             <TrashIcon />

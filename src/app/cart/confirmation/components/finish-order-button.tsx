@@ -1,10 +1,10 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import LoaderSpin from "@/components/common/loader-spin";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,7 +45,7 @@ const FinishOrderButton = () => {
         {isPendingFinishOrder ? (
           <>
             Finalizando sua compra
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <LoaderSpin />
           </>
         ) : (
           <>Finalizar compra</>

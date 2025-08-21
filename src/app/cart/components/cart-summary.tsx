@@ -1,9 +1,9 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
+import LoaderSpin from "@/components/common/loader-spin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatCentsToBRL } from "@/helpers/money";
@@ -39,7 +39,7 @@ const CartSummary = ({
     data,
     isPending: isLoadingCalculateShippingCost,
     isError: isErrorInCalculateShippingCost,
-    isRefetching: isRefetchingCalculateShippingCost
+    isRefetching: isRefetchingCalculateShippingCost,
   } = useCalculateShippingCost(selectedShippingAddress);
 
   const shippingCostInCents = data?.data.freightInCents;
@@ -60,8 +60,9 @@ const CartSummary = ({
         <div className="flex justify-between">
           <p className="text-sm">Frete</p>
           <div className="text-muted-foreground text-sm font-medium">
-            {isLoadingCalculateShippingCost || isRefetchingCalculateShippingCost ? (
-              <Loader2 className="mr-1 animate-spin" />
+            {isLoadingCalculateShippingCost ||
+            isRefetchingCalculateShippingCost ? (
+              <LoaderSpin />
             ) : (
               <p>
                 {isErrorInCalculateShippingCost
@@ -76,8 +77,9 @@ const CartSummary = ({
         <div className="flex justify-between">
           <p className="text-sm">Total</p>
           <div className="text-muted-foreground text-sm font-medium">
-            {isLoadingCalculateShippingCost || isRefetchingCalculateShippingCost ? (
-              <Loader2 className="mr-1 animate-spin" />
+            {isLoadingCalculateShippingCost ||
+            isRefetchingCalculateShippingCost ? (
+              <LoaderSpin />
             ) : (
               <p>
                 {isErrorInCalculateShippingCost

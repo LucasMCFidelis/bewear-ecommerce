@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Loader2, Pen, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import {
   createShippingAddressSchema,
 } from "@/actions/create-shipping-address/schema";
 import { UpdateDataShippingAddressSchema } from "@/actions/update-data-shipping-address/schema";
+import LoaderSpin from "@/components/common/loader-spin";
 import { Button } from "@/components/ui/button";
 import { shippingAddressTable } from "@/db/schema";
 import { formatAddress } from "@/helpers/address";
@@ -111,7 +112,7 @@ const AddressItem = ({
             >
               {deleteCartShippingAddressMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-1 animate-spin" />
+                  <LoaderSpin />
                 </>
               ) : (
                 <Trash />
