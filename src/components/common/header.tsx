@@ -1,6 +1,6 @@
 "use client";
 
-import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import { Home, LogInIcon, LogOutIcon, MenuIcon, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -26,9 +27,7 @@ const Header = () => {
       </Link>
 
       <div className="flex items-center gap-2">
-        {session?.user && (
-          <Cart/>
-        )}
+        {session?.user && <Cart />}
 
         <Sheet>
           <SheetTrigger asChild>
@@ -40,7 +39,7 @@ const Header = () => {
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
-            <div className="px-5">
+            <div className="h-full px-5 flex flex-col gap-8">
               {session?.user ? (
                 <>
                   <div className="flex justify-between">
@@ -70,6 +69,31 @@ const Header = () => {
                       <LogOutIcon />
                     </Button>
                   </div>
+
+                  <Separator />
+
+                  <div>
+                    <Button
+                      variant={"ghost"}
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={"/"}>
+                        <Home /> Inicio
+                      </Link>
+                    </Button>
+                    <Button
+                      variant={"ghost"}
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={"/orders"}>
+                        <Truck /> Meus pedidos
+                      </Link>
+                    </Button>
+                  </div>
+
+                  <Separator />
                 </>
               ) : (
                 <div className="flex items-center justify-between">
