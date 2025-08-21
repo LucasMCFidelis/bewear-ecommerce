@@ -244,6 +244,7 @@ export const orderTable = pgTable("order", {
   phone: text().notNull(),
   email: text().notNull(),
   cpfOrCnpj: text("cpf_or_cnpj").notNull(),
+  subtotalPriceInCents: integer("subtotal_price_in_cents").notNull(),
   shippingCostInCents: integer("shipping_cost_in_cents").notNull(),
   totalPriceInCents: integer("total_price_in_cents").notNull(),
   status: orderStatus().notNull().default("pending"),

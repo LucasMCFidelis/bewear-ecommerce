@@ -43,11 +43,12 @@ export const finishOrder = async () => {
     }
 
     const shippingCost = await calculateShippingCost();
-    const totalPriceInCents = cart.items.reduce(
+    const subtotalPriceInCents = cart.items.reduce(
       (acc, item) =>
         acc + item.productVariant.priceInCents * item.quantity,
-      shippingCost.data.freightInCents
+      0
     );
+    const totalPriceInCents = subtotalPriceInCents + shippingCost.data.freightInCents
     const [order] = await tx
       .insert(orderTable)
       .values({
@@ -65,6 +66,7 @@ export const finishOrder = async () => {
         street: cart.shippingAddress.street,
         userId: session.user.id,
         shippingCostInCents: shippingCost.data.freightInCents,
+        subtotalPriceInCents,
         totalPriceInCents,
         shippingAddressId: cart.shippingAddress!.id,
       })
