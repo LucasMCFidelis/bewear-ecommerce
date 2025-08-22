@@ -1,6 +1,5 @@
 "use client";
 
-
 import { getUserOrders } from "@/actions/get-user-orders";
 import {
   Accordion,
@@ -8,7 +7,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { formatAddress } from "@/helpers/address";
 import { useDeleteUserOrder } from "@/hooks/mutations/use-delete-user-order";
 import { useUserOrders } from "@/hooks/queries/use-user-orders";
 
@@ -38,6 +39,17 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pt-4 space-y-6 font-medium">
+                <Separator />
+                <div className="flex flex-col gap-4">
+                  <h4>Endereço de entrega</h4>
+                  <Card>
+                    <CardContent>
+                      <p className="text-sm font-normal">
+                        {formatAddress({ address: order.shippingAddress })}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
                 <Separator />
                 {order.items.map((item) => (
                   <OrderItem
