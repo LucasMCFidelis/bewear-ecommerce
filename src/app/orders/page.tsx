@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -13,8 +13,12 @@ const OrdersPage = async () => {
   if (!session?.user.id) redirect("/");
 
   const orders = await db.query.orderTable.findMany({
+    orderBy: [desc(orderTable.createdAt)],
     where: eq(orderTable.userId, session.user.id),
-    with: { items: true, shippingAddress: true },
+   with: {
+      items: { with: { productVariant: { with: { product: true } } } },
+      shippingAddress: true,
+    },
   });
 
   return (

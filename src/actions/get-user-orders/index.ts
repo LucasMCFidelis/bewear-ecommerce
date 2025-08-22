@@ -1,6 +1,6 @@
-"use server"
+"use server";
 
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 import { db } from "@/db";
@@ -16,8 +16,12 @@ export const getUserOrders = async () => {
   }
 
   const orders = await db.query.orderTable.findMany({
+    orderBy: [desc(orderTable.createdAt)],
     where: eq(orderTable.userId, session.user.id),
-    with: { items: true, shippingAddress: true },
+    with: {
+      items: { with: { productVariant: { with: { product: true } } } },
+      shippingAddress: true,
+    },
   });
 
   return orders;

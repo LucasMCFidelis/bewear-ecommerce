@@ -90,7 +90,7 @@ const FinishOrderButton = () => {
           <DialogFooter>
             {!isErrorFinishOrder && (
               <Button className="rounded-full" size="lg">
-                Ver meus pedidos
+                <Link href={"/orders"}>Ver meus pedidos</Link>
               </Button>
             )}
             <Button
