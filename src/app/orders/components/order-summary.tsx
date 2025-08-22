@@ -1,10 +1,11 @@
-import { CheckCircle, Loader2, X, XCircle } from "lucide-react";
+import { CheckCircle, Loader2, Trash2, X, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import LoaderSpin from "@/components/common/loader-spin";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { formatCentsToBRL } from "@/helpers/money";
+import { useCancelUserOrder } from "@/hooks/mutations/use-cancel-user-order";
 import { useDeleteUserOrder } from "@/hooks/mutations/use-delete-user-order";
 
 interface OrderSummaryProps {
@@ -22,6 +23,18 @@ const OrderSummary = ({
   totalPriceInCents,
 }: OrderSummaryProps) => {
   const deleteUserOrderMutation = useDeleteUserOrder(orderId);
+  const cancelUserOrderMutation = useCancelUserOrder(orderId);
+
+  const handleCancelUserOrder = () => {
+    cancelUserOrderMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Pedido cancelado com sucesso");
+      },
+      onError: () => {
+        toast.error("O pedido não pode ser cancelado, tente novamente");
+      },
+    });
+  };
 
   const handleDeleteUserOrder = () => {
     deleteUserOrderMutation.mutate(undefined, {
@@ -63,16 +76,34 @@ const OrderSummary = ({
         <Button
           variant={"destructive"}
           className="w-full"
-          onClick={handleDeleteUserOrder}
-          disabled={deleteUserOrderMutation.isPending}
+          onClick={handleCancelUserOrder}
+          disabled={cancelUserOrderMutation.isPending}
         >
-          {deleteUserOrderMutation.isPending ? (
+          {cancelUserOrderMutation.isPending ? (
             <>
               Cancelando pedido <LoaderSpin />
             </>
           ) : (
             <>
               Cancelar pedido <X />
+            </>
+          )}
+        </Button>
+      )}
+      {orderStatus === "canceled" && (
+        <Button
+          variant={"destructive"}
+          className="w-full"
+          onClick={handleDeleteUserOrder}
+          disabled={deleteUserOrderMutation.isPending}
+        >
+          {deleteUserOrderMutation.isPending ? (
+            <>
+              Deletando pedido <LoaderSpin />
+            </>
+          ) : (
+            <>
+              Deletar pedido <Trash2 />
             </>
           )}
         </Button>
