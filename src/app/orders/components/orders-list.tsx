@@ -1,7 +1,5 @@
 "use client";
 
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
-import Image from "next/image";
 
 import { getUserOrders } from "@/actions/get-user-orders";
 import {
@@ -11,8 +9,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
-import { formatCentsToBRL } from "@/helpers/money";
+import { useDeleteUserOrder } from "@/hooks/mutations/use-delete-user-order";
 import { useUserOrders } from "@/hooks/queries/use-user-orders";
+
+import OrderItem from "./order-item";
+import OrderSummary from "./order-summary";
 
 interface OrdersListProps {
   initialOrders: Awaited<ReturnType<typeof getUserOrders>>;
@@ -20,6 +21,7 @@ interface OrdersListProps {
 
 const OrdersList = ({ initialOrders }: OrdersListProps) => {
   const { data: orders } = useUserOrders({ initialData: initialOrders });
+  const {} = useDeleteUserOrder;
 
   return (
     <>
@@ -38,77 +40,26 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
               <AccordionContent className="pt-4 space-y-6 font-medium">
                 <Separator />
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex gap-2">
-                    <Image
-                      src={item.productVariant.imageUrl}
-                      alt={item.productVariant.product.name}
-                      width={86}
-                      height={86}
-                      className="rounded-xl"
-                    />
-                    <div className="flex flex-col">
-                      <h4 className="font-semibold">
-                        {item.productVariant.product.name}
-                      </h4>
-                      <p className="text-muted-foreground text-xs">
-                        {item.productVariant.product.description}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {item.productVariant.color} | Quant: {item.quantity}
-                      </p>
-                      <p className="font-semibold">
-                        {formatCentsToBRL(item.priceInCents * item.quantity)}
-                      </p>
-                    </div>
-                  </div>
+                  <OrderItem
+                    key={item.id}
+                    orderItemName={item.productVariant.product.name}
+                    orderItemDescription={
+                      item.productVariant.product.description
+                    }
+                    orderItemImageUrl={item.productVariant.imageUrl}
+                    orderItemVariantColor={item.productVariant.color}
+                    orderItemQuantity={item.quantity}
+                    orderItemPriceInCents={item.priceInCents}
+                  />
                 ))}
                 <Separator />
-                <div className="flex justify-between items-center">
-                  <span>Status</span>
-                  <div className="flex items-center">
-                    {order.status === "pending" && (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin text-yellow-500" />
-                        <p className="text-yellow-500 font-semibold">
-                          Pendente
-                        </p>
-                      </>
-                    )}
-                    {order.status === "paid" && (
-                      <>
-                        <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                        <p className="text-green-500 font-semibold">Pago</p>
-                      </>
-                    )}
-                    {order.status === "canceled" && (
-                      <>
-                        <XCircle className="mr-2 h-5 w-5 text-destructive" />
-                        <p className="text-red-500 font-semibold">Cancelado</p>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex flex-col gap-3">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <p className="text-muted-foreground">
-                      {formatCentsToBRL(order.subtotalPriceInCents)}
-                    </p>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Transporte e Manuseio</span>
-                    <p className="text-muted-foreground">
-                      {formatCentsToBRL(order.shippingCostInCents)}
-                    </p>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Total</span>
-                    <p className="font-semibold">
-                      {formatCentsToBRL(order.totalPriceInCents)}
-                    </p>
-                  </div>
-                </div>
+                <OrderSummary
+                  orderId={order.id}
+                  orderStatus={order.status}
+                  subtotalPriceInCents={order.subtotalPriceInCents}
+                  shippingCostInCents={order.shippingCostInCents}
+                  totalPriceInCents={order.totalPriceInCents}
+                />
               </AccordionContent>
             </AccordionItem>
           ))}

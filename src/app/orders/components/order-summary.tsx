@@ -1,0 +1,103 @@
+import { CheckCircle, Loader2, X, XCircle } from "lucide-react";
+import { toast } from "sonner";
+
+import LoaderSpin from "@/components/common/loader-spin";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { formatCentsToBRL } from "@/helpers/money";
+import { useDeleteUserOrder } from "@/hooks/mutations/use-delete-user-order";
+
+interface OrderSummaryProps {
+  orderId: string;
+  orderStatus: "pending" | "paid" | "canceled";
+  subtotalPriceInCents: number;
+  shippingCostInCents: number;
+  totalPriceInCents: number;
+}
+const OrderSummary = ({
+  orderId,
+  orderStatus,
+  shippingCostInCents,
+  subtotalPriceInCents,
+  totalPriceInCents,
+}: OrderSummaryProps) => {
+  const deleteUserOrderMutation = useDeleteUserOrder(orderId);
+
+  const handleDeleteUserOrder = () => {
+    deleteUserOrderMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Pedido deletado com sucesso");
+      },
+      onError: () => {
+        toast.error("O pedido não pode ser deletado, tente novamente");
+      },
+    });
+  };
+
+  return (
+    <>
+      <div className="flex justify-between items-center">
+        <span>Status</span>
+        <div className="flex items-center">
+          {orderStatus === "pending" && (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin text-yellow-500" />
+              <p className="text-yellow-500 font-semibold">Pendente</p>
+            </>
+          )}
+          {orderStatus === "paid" && (
+            <>
+              <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+              <p className="text-green-500 font-semibold">Pago</p>
+            </>
+          )}
+          {orderStatus === "canceled" && (
+            <>
+              <XCircle className="mr-2 h-5 w-5 text-destructive" />
+              <p className="text-red-500 font-semibold">Cancelado</p>
+            </>
+          )}
+        </div>
+      </div>
+      {orderStatus === "pending" && (
+        <Button
+          variant={"destructive"}
+          className="w-full"
+          onClick={handleDeleteUserOrder}
+          disabled={deleteUserOrderMutation.isPending}
+        >
+          {deleteUserOrderMutation.isPending ? (
+            <>
+              Cancelando pedido <LoaderSpin />
+            </>
+          ) : (
+            <>
+              Cancelar pedido <X />
+            </>
+          )}
+        </Button>
+      )}
+      <Separator />
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between">
+          <span>Subtotal</span>
+          <p className="text-muted-foreground">
+            {formatCentsToBRL(subtotalPriceInCents)}
+          </p>
+        </div>
+        <div className="flex justify-between">
+          <span>Transporte e Manuseio</span>
+          <p className="text-muted-foreground">
+            {formatCentsToBRL(shippingCostInCents)}
+          </p>
+        </div>
+        <div className="flex justify-between">
+          <span>Total</span>
+          <p className="font-semibold">{formatCentsToBRL(totalPriceInCents)}</p>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default OrderSummary;
