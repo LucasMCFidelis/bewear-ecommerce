@@ -9,6 +9,7 @@ import {
   cartTable,
   orderItemTable,
   orderTable,
+  productVariantTable,
 } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
@@ -44,11 +45,11 @@ export const finishOrder = async () => {
 
     const shippingCost = await calculateShippingCost();
     const subtotalPriceInCents = cart.items.reduce(
-      (acc, item) =>
-        acc + item.productVariant.priceInCents * item.quantity,
+      (acc, item) => acc + item.productVariant.priceInCents * item.quantity,
       0
     );
-    const totalPriceInCents = subtotalPriceInCents + shippingCost.data.freightInCents
+    const totalPriceInCents =
+      subtotalPriceInCents + shippingCost.data.freightInCents;
     const [order] = await tx
       .insert(orderTable)
       .values({
@@ -74,6 +75,24 @@ export const finishOrder = async () => {
     if (!order) {
       throw new Error("Failed to create order");
     }
+
+    cart.items.forEach(async (item) => {
+      const productVariant = await tx.query.productVariantTable.findFirst({
+        where: (productVariant, { eq }) =>
+          eq(productVariant.id, item.productVariantId),
+      });
+      if (!productVariant || productVariant?.quantityInStock < item.quantity) {
+        throw new Error(
+          "Product variant not found or Quantity required exceed quantity in stock "
+        );
+      }
+      await tx
+        .update(productVariantTable)
+        .set({
+          quantityInStock: productVariant.quantityInStock - item.quantity,
+        })
+        .where(eq(productVariantTable.id, productVariant.id));
+    });
 
     const orderItensPayload: Array<typeof orderItemTable.$inferInsert> =
       cart.items.map((item) => ({
