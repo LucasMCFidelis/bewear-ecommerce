@@ -1,9 +1,17 @@
 "use client";
 
-import { Home, LogInIcon, LogOutIcon, MenuIcon, Truck } from "lucide-react";
+import {
+  Home,
+  LogInIcon,
+  LogOutIcon,
+  MenuIcon,
+  ShoppingBagIcon,
+  Truck,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { useGlobalStates } from "@/hooks/states/use-global-states";
 import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -17,9 +25,12 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import Cart from "./cart";
+import MenuLink from "./menu-link";
 
 const Header = () => {
   const { data: session } = authClient.useSession();
+  const [{ isSheetMenuOpen }, setGlobalState] = useGlobalStates();
+
   return (
     <header className="flex items-center p-5 justify-between">
       <Link href={"/"}>
@@ -29,7 +40,10 @@ const Header = () => {
       <div className="flex items-center gap-2">
         {session?.user && <Cart />}
 
-        <Sheet>
+        <Sheet
+          open={isSheetMenuOpen}
+          onOpenChange={(value) => setGlobalState({ isSheetMenuOpen: value })}
+        >
           <SheetTrigger asChild>
             <Button variant={"outline"} size={"icon"}>
               <MenuIcon />
@@ -73,24 +87,22 @@ const Header = () => {
                   <Separator />
 
                   <div>
-                    <Button
-                      variant={"ghost"}
-                      className="w-full justify-start"
-                      asChild
+                    <MenuLink href="/">
+                      <Home /> Inicio
+                    </MenuLink>
+                    <MenuLink href="/orders">
+                      <Truck /> Meus pedidos
+                    </MenuLink>
+                    <MenuLink
+                      onClick={() => {
+                        setGlobalState({
+                          isSheetMenuOpen: false,
+                          isCartOpen: true,
+                        });
+                      }}
                     >
-                      <Link href={"/"}>
-                        <Home /> Inicio
-                      </Link>
-                    </Button>
-                    <Button
-                      variant={"ghost"}
-                      className="w-full justify-start"
-                      asChild
-                    >
-                      <Link href={"/orders"}>
-                        <Truck /> Meus pedidos
-                      </Link>
-                    </Button>
+                      <ShoppingBagIcon /> Sacola
+                    </MenuLink>
                   </div>
 
                   <Separator />
