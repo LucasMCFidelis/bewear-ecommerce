@@ -2,10 +2,10 @@
 
 import { ShoppingBagIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 import { formatCentsToBRL } from "@/helpers/money";
 import { useCart } from "@/hooks/queries/use-cart";
+import { useGlobalStates } from "@/hooks/states/use-global-states";
 
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
@@ -20,11 +20,14 @@ import {
 import CartItem from "./cart-item";
 
 const Cart = () => {
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [{ isCartOpen }, setGlobalState] = useGlobalStates();
   const { data: cart, isPending: cartIsLoading } = useCart();
 
   return (
-    <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+    <Sheet
+      open={isCartOpen}
+      onOpenChange={(value) => setGlobalState({ isCartOpen: value })}
+    >
       <SheetTrigger asChild>
         <Button variant={"outline"} size={"icon"}>
           <ShoppingBagIcon />
@@ -78,7 +81,7 @@ const Cart = () => {
           <Button
             variant={"link"}
             className="text-secondary-foreground"
-            onClick={() => setIsCartOpen(false)}
+            onClick={() => setGlobalState({ isCartOpen: false })}
           >
             Continuar comprando
           </Button>

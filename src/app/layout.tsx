@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
+import { NuqsProvider } from "@/providers/nuqs-provider";
 import ReactQueryProvider from "@/providers/react-query";
 
 const geistSans = Geist({
@@ -34,12 +35,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <ReactQueryProvider>
-          <Header />
-          <div className="flex-1">
-            {children}
-            <Toaster />
-          </div>
-          <Footer />
+          <NuqsProvider>
+            <Header />
+            <div className="flex-1">
+              {children}
+              <Toaster />
+            </div>
+            <Footer />
+          </NuqsProvider>
         </ReactQueryProvider>
       </body>
     </html>

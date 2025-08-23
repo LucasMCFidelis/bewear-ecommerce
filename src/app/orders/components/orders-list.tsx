@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { getUserOrders } from "@/actions/get-user-orders";
 import {
   Accordion,
@@ -7,11 +9,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatAddress } from "@/helpers/address";
-import { useDeleteUserOrder } from "@/hooks/mutations/use-delete-user-order";
 import { useUserOrders } from "@/hooks/queries/use-user-orders";
+import { useGlobalStates } from "@/hooks/states/use-global-states";
 
 import OrderItem from "./order-item";
 import OrderSummary from "./order-summary";
@@ -22,7 +25,7 @@ interface OrdersListProps {
 
 const OrdersList = ({ initialOrders }: OrdersListProps) => {
   const { data: orders } = useUserOrders({ initialData: initialOrders });
-  const {} = useDeleteUserOrder;
+  const [{}, setGlobalState] = useGlobalStates();
 
   return (
     <>
@@ -78,7 +81,22 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
         </Accordion>
       ) : (
         <>
-          <p>empty</p>
+          <div className="flex w-full h-auto aspect-square relative">
+            <Image
+              src={"/illustration-order-fail.svg"}
+              alt={"Lista de pedidos vazia"}
+              fill
+            />
+          </div>
+          <p className="text-center font-medium">
+            Você ainda não realizou nenhum pedido.
+          </p>
+          <Button
+            className="w-full"
+            onClick={() => setGlobalState({ isCartOpen: true })}
+          >
+            Ir para o carrinho
+          </Button>
         </>
       )}
     </>
