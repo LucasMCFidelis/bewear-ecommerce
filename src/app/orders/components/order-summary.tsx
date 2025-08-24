@@ -8,6 +8,8 @@ import { formatCentsToBRL } from "@/helpers/money";
 import { useCancelUserOrder } from "@/hooks/mutations/use-cancel-user-order";
 import { useDeleteUserOrder } from "@/hooks/mutations/use-delete-user-order";
 
+import OrderStatus from "./order-status";
+
 interface OrderSummaryProps {
   orderId: string;
   orderStatus: "pending" | "paid" | "canceled";
@@ -51,26 +53,7 @@ const OrderSummary = ({
     <>
       <div className="flex justify-between items-center">
         <span>Status</span>
-        <div className="flex items-center">
-          {orderStatus === "pending" && (
-            <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin text-yellow-500" />
-              <p className="text-yellow-500 font-semibold">Pendente</p>
-            </>
-          )}
-          {orderStatus === "paid" && (
-            <>
-              <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-              <p className="text-green-500 font-semibold">Pago</p>
-            </>
-          )}
-          {orderStatus === "canceled" && (
-            <>
-              <XCircle className="mr-2 h-5 w-5 text-destructive" />
-              <p className="text-red-500 font-semibold">Cancelado</p>
-            </>
-          )}
-        </div>
+        <OrderStatus orderStatus={orderStatus} componentType="complete" />
       </div>
       {orderStatus === "pending" && (
         <Button

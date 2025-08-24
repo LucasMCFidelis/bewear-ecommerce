@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import Image from "next/image";
 
 import { getUserOrders } from "@/actions/get-user-orders";
@@ -17,6 +18,7 @@ import { useUserOrders } from "@/hooks/queries/use-user-orders";
 import { useGlobalStates } from "@/hooks/states/use-global-states";
 
 import OrderItem from "./order-item";
+import OrderStatus from "./order-status";
 import OrderSummary from "./order-summary";
 
 interface OrdersListProps {
@@ -34,11 +36,16 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
           {orders.map((order, index) => (
             <AccordionItem key={order.id} value={order.id}>
               <AccordionTrigger className="py-0 items-center">
-                <div className="flex flex-col">
-                  <h3 className="font-semibold">Número do Pedido</h3>
-                  <p className="text-muted-foreground">
-                    #{(orders.length - index).toString().padStart(3, "0")}
-                  </p>
+                <div className="flex">
+                  <OrderStatus
+                    orderStatus={order.status}
+                  />
+                  <h3 className="font-semibold">
+                    Pedido{" "}
+                    <span className="text-muted-foreground">
+                      #{(orders.length - index).toString().padStart(3, "0")}
+                    </span>
+                  </h3>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pt-4 space-y-6 font-medium">
