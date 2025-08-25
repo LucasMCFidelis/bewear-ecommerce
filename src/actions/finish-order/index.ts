@@ -5,11 +5,9 @@ import { headers } from "next/headers";
 
 import { db } from "@/db";
 import {
-  cartItemTable,
-  cartTable,
   orderItemTable,
   orderTable,
-  productVariantTable,
+  productVariantTable
 } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
@@ -35,6 +33,7 @@ export const finishOrder = async () => {
     },
   });
 
+  let orderId: string | undefined;
   await db.transaction(async (tx) => {
     if (!cart) {
       throw new Error("Cart not found");
@@ -75,6 +74,7 @@ export const finishOrder = async () => {
     if (!order) {
       throw new Error("Failed to create order");
     }
+    orderId = order.id;
 
     cart.items.forEach(async (item) => {
       const productVariant = await tx.query.productVariantTable.findFirst({
@@ -102,10 +102,12 @@ export const finishOrder = async () => {
         priceInCents: item.productVariant.priceInCents,
       }));
 
-    await Promise.all([
-      tx.insert(orderItemTable).values(orderItensPayload),
-      tx.delete(cartTable).where(eq(cartTable.id, cart.id)),
-      tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id)),
-    ]);
+    await tx.insert(orderItemTable).values(orderItensPayload);
   });
+
+  if (!orderId) {
+    throw new Error("Failed to create order");
+  }
+
+  return { orderId };
 };

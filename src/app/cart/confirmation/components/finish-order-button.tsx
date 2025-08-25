@@ -1,9 +1,11 @@
 "use client";
 
+import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import { createCheckoutSession } from "@/actions/create-checkout-session";
 import LoaderSpin from "@/components/common/loader-spin";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,21 +18,26 @@ import {
 import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
 
 const FinishOrderButton = () => {
-  const {
-    mutateAsync: finishOrderMutate,
-    error: errorInFinishOrder,
-    isError: isErrorFinishOrder,
-    isPending: isPendingFinishOrder,
-  } = useFinishOrder();
+  const finishOrderMutation = useFinishOrder();
   const [isConfirmationDialogIsOpen, setIsConfirmationDialogIsOpen] =
     useState<boolean>(false);
 
   const handleFinishOrder = async () => {
-    try {
-      await finishOrderMutate();
-    } catch (error) {
-      console.log(error);
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      throw new Error("Stripe publishable key is not set");
     }
+    const { orderId } = await finishOrderMutation.mutateAsync();
+    const checkoutSession = await createCheckoutSession({ orderId });
+    const stripe = await loadStripe(
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    );
+    if (!stripe) {
+      throw new Error("Failed to load stripe");
+    }
+    await stripe.redirectToCheckout({
+      sessionId: checkoutSession.id,
+    });
+
     setIsConfirmationDialogIsOpen(true);
   };
 
@@ -40,9 +47,9 @@ const FinishOrderButton = () => {
         className="w-full rounded-full"
         size="lg"
         onClick={handleFinishOrder}
-        disabled={isPendingFinishOrder}
+        disabled={finishOrderMutation.isPending}
       >
-        {isPendingFinishOrder ? (
+        {finishOrderMutation.isPending ? (
           <>
             Finalizando sua compra
             <LoaderSpin />
@@ -57,7 +64,7 @@ const FinishOrderButton = () => {
       >
         <DialogContent className="text-center ">
           <div className="relative w-full h-auto aspect-square">
-            {isErrorFinishOrder ? (
+            {finishOrderMutation.isError ? (
               <Image src={"/illustration-order-fail.svg"} alt={"Fail"} fill />
             ) : (
               <Image
@@ -67,13 +74,13 @@ const FinishOrderButton = () => {
               />
             )}
           </div>
-          {isErrorFinishOrder ? (
+          {finishOrderMutation.isError ? (
             <>
               <DialogTitle className="mt-4 text-2xl text-destructive">
                 Pedido falhou!
               </DialogTitle>
               <DialogDescription className="font-medium max-h-44 overflow-y-hidden">
-                Seu pedido não pode ser efetuado. {errorInFinishOrder.message}.
+                Seu pedido não pode ser efetuado. {finishOrderMutation.error.message}.
               </DialogDescription>
             </>
           ) : (
@@ -88,7 +95,7 @@ const FinishOrderButton = () => {
             </>
           )}
           <DialogFooter>
-            {!isErrorFinishOrder && (
+            {!finishOrderMutation.isError && (
               <Button className="rounded-full" size="lg">
                 <Link href={"/orders"}>Ver meus pedidos</Link>
               </Button>
