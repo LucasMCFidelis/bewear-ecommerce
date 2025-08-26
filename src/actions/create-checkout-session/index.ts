@@ -61,21 +61,34 @@ export const createCheckoutSession = async (
       metadata: {
         orderId,
       },
-      line_items: order.items.map((orderItem) => {
-        return {
+      line_items: [
+        {
           price_data: {
             currency: "brl",
             product_data: {
-              name: `${orderItem.productVariant.product.name} - ${orderItem.productVariant.name}`,
-              description: orderItem.productVariant.product.description,
-              images: [orderItem.productVariant.imageUrl],
+              name: "Frete",
+              description: "Taxa de entrega dos produtos",
             },
-            // Em centavos
-            unit_amount: orderItem.priceInCents,
+            unit_amount: order.shippingCostInCents,
           },
-          quantity: orderItem.quantity,
-        };
-      }),
+          quantity: 1,
+        },
+        ...order.items.map((orderItem) => {
+          return {
+            price_data: {
+              currency: "brl",
+              product_data: {
+                name: `${orderItem.productVariant.product.name} - ${orderItem.productVariant.name}`,
+                description: orderItem.productVariant.product.description,
+                images: [orderItem.productVariant.imageUrl],
+              },
+              // Em centavos
+              unit_amount: orderItem.priceInCents,
+            },
+            quantity: orderItem.quantity,
+          };
+        }),
+      ],
     });
 
     await Promise.all([
