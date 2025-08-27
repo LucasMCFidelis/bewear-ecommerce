@@ -1,4 +1,5 @@
-import { CheckCircle, Loader2, Trash2, X, XCircle } from "lucide-react";
+import { Trash2, X } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 import LoaderSpin from "@/components/common/loader-spin";
@@ -16,6 +17,7 @@ interface OrderSummaryProps {
   subtotalPriceInCents: number;
   shippingCostInCents: number;
   totalPriceInCents: number;
+  checkoutSessionUrl: string | null;
 }
 const OrderSummary = ({
   orderId,
@@ -23,6 +25,7 @@ const OrderSummary = ({
   shippingCostInCents,
   subtotalPriceInCents,
   totalPriceInCents,
+  checkoutSessionUrl,
 }: OrderSummaryProps) => {
   const deleteUserOrderMutation = useDeleteUserOrder(orderId);
   const cancelUserOrderMutation = useCancelUserOrder(orderId);
@@ -56,22 +59,29 @@ const OrderSummary = ({
         <OrderStatus orderStatus={orderStatus} componentType="complete" />
       </div>
       {orderStatus === "pending" && (
-        <Button
-          variant={"destructive"}
-          className="w-full"
-          onClick={handleCancelUserOrder}
-          disabled={cancelUserOrderMutation.isPending}
-        >
-          {cancelUserOrderMutation.isPending ? (
-            <>
-              Cancelando pedido <LoaderSpin />
-            </>
-          ) : (
-            <>
-              Cancelar pedido <X />
-            </>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {checkoutSessionUrl && (
+            <Button className="w-full" asChild>
+              <Link href={checkoutSessionUrl}>Pagar</Link>
+            </Button>
           )}
-        </Button>
+          <Button
+            variant={"destructive"}
+            className="w-full"
+            onClick={handleCancelUserOrder}
+            disabled={cancelUserOrderMutation.isPending}
+          >
+            {cancelUserOrderMutation.isPending ? (
+              <>
+                Cancelando pedido <LoaderSpin />
+              </>
+            ) : (
+              <>
+                Cancelar pedido <X />
+              </>
+            )}
+          </Button>
+        </div>
       )}
       {orderStatus === "canceled" && (
         <Button

@@ -20,15 +20,24 @@ export const POST = async (request: Request) => {
     signature,
     process.env.STRIPE_WEBHOOK_SECRET
   );
-  if (event.type === "checkout.session.completed") {
+
+  switch (event.type) {
+    case "checkout.session.completed": {
     const session = event.data.object as Stripe.Checkout.Session;
     const orderId = session.metadata?.orderId;
     if (!orderId) return NextResponse.error();
 
     await db
       .update(orderTable)
-      .set({ status: "paid" })
+        .set({ status: "paid", checkoutSessionUrl: null })
       .where(eq(orderTable.id, orderId));
+
+      break;
+    }
+    default: {
+      console.warn(`Unhandled event type: ${event.type}`);
+      break;
+    }
   }
 
   return NextResponse.json({ received: true }); 

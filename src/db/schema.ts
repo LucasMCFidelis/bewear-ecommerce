@@ -248,6 +248,7 @@ export const orderTable = pgTable("order", {
   shippingCostInCents: integer("shipping_cost_in_cents").notNull(),
   totalPriceInCents: integer("total_price_in_cents").notNull(),
   status: orderStatus().notNull().default("pending"),
+  checkoutSessionUrl: text("checkout_session_url"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

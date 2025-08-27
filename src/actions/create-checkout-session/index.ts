@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import Stripe from "stripe";
 
 import { db } from "@/db";
-import { cartItemTable, cartTable } from "@/db/schema";
+import { cartItemTable, cartTable, orderTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import {
@@ -92,6 +92,7 @@ export const createCheckoutSession = async (
     });
 
     await Promise.all([
+      tx.update(orderTable).set({checkoutSessionUrl: newSession.url}).where(eq(orderTable.id, orderId)),
       tx.delete(cartTable).where(eq(cartTable.id, cart.id)),
       tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id)),
     ]);

@@ -1,6 +1,5 @@
 "use client";
 
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import Image from "next/image";
 
 import { getUserOrders } from "@/actions/get-user-orders";
@@ -81,6 +80,7 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
                   subtotalPriceInCents={order.subtotalPriceInCents}
                   shippingCostInCents={order.shippingCostInCents}
                   totalPriceInCents={order.totalPriceInCents}
+                  checkoutSessionUrl={order.checkoutSessionUrl }
                 />
               </AccordionContent>
             </AccordionItem>
