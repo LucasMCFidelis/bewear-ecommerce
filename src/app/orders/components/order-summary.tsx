@@ -67,7 +67,7 @@ const OrderSummary = ({
           )}
           <Button
             variant={"destructive"}
-            className="w-full"
+            className={`w-full ${!checkoutSessionUrl && "col-span-full"}`}
             onClick={handleCancelUserOrder}
             disabled={cancelUserOrderMutation.isPending}
           >
