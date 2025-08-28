@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { cancelOrderTransition } from "@/actions/cancel-user-order";
 import { db } from "@/db";
 import { orderTable } from "@/db/schema";
 
@@ -23,14 +24,30 @@ export const POST = async (request: Request) => {
 
   switch (event.type) {
     case "checkout.session.completed": {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const orderId = session.metadata?.orderId;
-    if (!orderId) return NextResponse.error();
+      const session = event.data.object as Stripe.Checkout.Session;
+      const orderId = session.metadata?.orderId;
+      if (!orderId) return NextResponse.error();
 
-    await db
-      .update(orderTable)
+      await db
+        .update(orderTable)
         .set({ status: "paid", checkoutSessionUrl: null })
-      .where(eq(orderTable.id, orderId));
+        .where(eq(orderTable.id, orderId));
+
+      break;
+    }
+    case "checkout.session.expired": {
+      const sessionExpired = event.data.object;
+      const orderId = sessionExpired.metadata?.orderId;
+
+      if (!orderId) return NextResponse.error();
+
+      await db.transaction(async (tx) => {
+        cancelOrderTransition({ data: { orderId }, tx, userId: null });
+      });
+
+      console.log(
+        `Sessão de checkout expirada: ${sessionExpired.id}, o pedido foi considerado cancelado`
+      );
 
       break;
     }
@@ -39,6 +56,5 @@ export const POST = async (request: Request) => {
       break;
     }
   }
-
-  return NextResponse.json({ received: true }); 
+  return NextResponse.json({ received: true });
 };
