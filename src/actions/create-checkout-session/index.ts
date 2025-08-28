@@ -92,7 +92,13 @@ export const createCheckoutSession = async (
     });
 
     await Promise.all([
-      tx.update(orderTable).set({checkoutSessionUrl: newSession.url}).where(eq(orderTable.id, orderId)),
+      tx
+        .update(orderTable)
+        .set({
+          checkoutSessionId: newSession.id,
+          checkoutSessionUrl: newSession.url,
+        })
+        .where(eq(orderTable.id, orderId)),
       tx.delete(cartTable).where(eq(cartTable.id, cart.id)),
       tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id)),
     ]);

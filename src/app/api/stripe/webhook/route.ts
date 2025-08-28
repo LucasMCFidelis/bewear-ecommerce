@@ -30,7 +30,11 @@ export const POST = async (request: Request) => {
 
       await db
         .update(orderTable)
-        .set({ status: "paid", checkoutSessionUrl: null })
+        .set({
+          status: "paid",
+          checkoutSessionId: null,
+          checkoutSessionUrl: null,
+        })
         .where(eq(orderTable.id, orderId));
 
       break;

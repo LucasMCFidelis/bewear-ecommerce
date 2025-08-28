@@ -4,6 +4,7 @@ import { eq, ExtractTablesWithRelations } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import { headers } from "next/headers";
+import Stripe from "stripe";
 
 import { db } from "@/db";
 import { orderTable, productVariantTable } from "@/db/schema";
@@ -28,6 +29,11 @@ export const cancelOrderTransition = async ({
   tx,
 }: cancelOrderTransitionProps) => {
   cancelUserOrderSchema.parse(data);
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("Stripe Secret key is not defined");
+  }
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
   const order = await tx.query.orderTable.findFirst({
     where: (order, { eq, and }) => {
       if (userId) {
@@ -39,28 +45,36 @@ export const cancelOrderTransition = async ({
     with: { items: true },
   });
   if (!order) throw new Error("Order not found or Unauthorized");
+  if (!order.checkoutSessionId)
+    throw new Error("Order haven't Checkout Session associated");
 
-  await tx
-    .update(orderTable)
-    .set({ status: "canceled", checkoutSessionUrl: null })
-    .where(eq(orderTable.id, order.id));
-
-  order.items.forEach(async (item) => {
-    const productVariant = await tx.query.productVariantTable.findFirst({
-      where: (productVariant, { eq }) =>
-        eq(productVariant.id, item.productVariantId),
-    });
-    if (!productVariant) {
-      throw new Error("Product variant not found ");
-    }
-
-    await tx
-      .update(productVariantTable)
+  await Promise.all([
+    tx
+      .update(orderTable)
       .set({
-        quantityInStock: productVariant.quantityInStock + item.quantity,
+        status: "canceled",
+        checkoutSessionId: null,
+        checkoutSessionUrl: null,
       })
-      .where(eq(productVariantTable.id, productVariant.id));
-  });
+      .where(eq(orderTable.id, order.id)),
+    stripe.checkout.sessions.expire(order.checkoutSessionId),
+    order.items.forEach(async (item) => {
+      const productVariant = await tx.query.productVariantTable.findFirst({
+        where: (productVariant, { eq }) =>
+          eq(productVariant.id, item.productVariantId),
+      });
+      if (!productVariant) {
+        throw new Error("Product variant not found ");
+      }
+
+      await tx
+        .update(productVariantTable)
+        .set({
+          quantityInStock: productVariant.quantityInStock + item.quantity,
+        })
+        .where(eq(productVariantTable.id, productVariant.id));
+    }),
+  ]);
 };
 
 export const cancelUserOrder = async (data: CancelUserOrderSchema) => {

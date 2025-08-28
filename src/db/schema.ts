@@ -31,7 +31,7 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
     fields: [userTable.id],
     references: [cartTable.userId],
   }),
-  orders: many(orderTable)
+  orders: many(orderTable),
 }));
 
 export const sessionTable = pgTable("session", {
@@ -167,7 +167,7 @@ export const shippingAddressRelations = relations(
       fields: [shippingAddressTable.id],
       references: [cartTable.shippingAddressId],
     }),
-  orders: many(orderTable)
+    orders: many(orderTable),
   })
 );
 
@@ -248,6 +248,7 @@ export const orderTable = pgTable("order", {
   shippingCostInCents: integer("shipping_cost_in_cents").notNull(),
   totalPriceInCents: integer("total_price_in_cents").notNull(),
   status: orderStatus().notNull().default("pending"),
+  checkoutSessionId: text("checkout_session_id"),
   checkoutSessionUrl: text("checkout_session_url"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
