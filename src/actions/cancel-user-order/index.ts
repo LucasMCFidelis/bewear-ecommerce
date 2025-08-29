@@ -3,13 +3,12 @@
 import { eq, ExtractTablesWithRelations } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgTransaction } from "drizzle-orm/pg-core";
-import { headers } from "next/headers";
 import Stripe from "stripe";
 
+import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { orderTable, productVariantTable } from "@/db/schema";
 import * as Schema from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 import { CancelUserOrderSchema, cancelUserOrderSchema } from "./schema";
 
@@ -78,14 +77,9 @@ export const cancelOrderTransition = async ({
 };
 
 export const cancelUserOrder = async (data: CancelUserOrderSchema) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await verifyUser();
 
   await db.transaction(async (tx) => {
-    await cancelOrderTransition({ data, userId: session.user.id, tx });
+    await cancelOrderTransition({ data, userId: user.id, tx });
   });
 };

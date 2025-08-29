@@ -1,28 +1,18 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 
+import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
-import {
-  orderItemTable,
-  orderTable,
-  productVariantTable
-} from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { orderItemTable, orderTable, productVariantTable } from "@/db/schema";
 
 import { calculateShippingCost } from "../calculate-shipping-cost";
 
 export const finishOrder = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await verifyUser();
 
   const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
+    where: (cart, { eq }) => eq(cart.userId, user.id),
     with: {
       shippingAddress: true,
       items: {
@@ -64,7 +54,7 @@ export const finishOrder = async () => {
         recipientName: cart.shippingAddress.recipientName,
         state: cart.shippingAddress.state,
         street: cart.shippingAddress.street,
-        userId: session.user.id,
+        userId: user.id,
         shippingCostInCents: shippingCost.data.freightInCents,
         subtotalPriceInCents,
         totalPriceInCents,

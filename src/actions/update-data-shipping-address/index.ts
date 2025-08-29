@@ -2,11 +2,10 @@
 
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
+import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 import { updateCartShippingAddress } from "../update-cart-shipping-address";
 import {
@@ -25,19 +24,13 @@ export const updateDataShippingAddress = async ({
 }: UpdateDataShippingAddressProps) => {
   updateDataShippingAddressSchema.parse(data);
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await verifyUser();
 
   const updatedShippingAddress = await db.query.shippingAddressTable.findFirst({
     where: (shippingAddress, { eq, and }) =>
       and(
         eq(shippingAddress.id, shippingAddressId),
-        eq(shippingAddress.userId, session.user.id)
+        eq(shippingAddress.userId, user.id)
       ),
   });
   if (!updatedShippingAddress) {
@@ -69,7 +62,7 @@ export const updateDataShippingAddress = async ({
   if (!isActualizedShippingCart) {
     throw new Error("Shipping address could not be updated");
   }
-  
+
   revalidatePath("/cart/identification");
 
   return shippingAddress;

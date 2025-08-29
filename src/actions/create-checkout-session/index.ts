@@ -1,12 +1,11 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import Stripe from "stripe";
 
+import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartItemTable, cartTable, orderTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 import {
   CreateCheckoutSessionSchema,
@@ -18,16 +17,11 @@ export const createCheckoutSession = async (
 ) => {
   const { orderId } = createCheckoutSessionSchema.parse(data);
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await verifyUser();
 
   const order = await db.query.orderTable.findFirst({
     where: (order, { eq, and }) =>
-      and(eq(order.id, orderId), eq(order.userId, session.user.id)),
+      and(eq(order.id, orderId), eq(order.userId, user.id)),
     with: { items: { with: { productVariant: { with: { product: true } } } } },
   });
   if (!order) throw new Error("Order not found or unauthorized");
@@ -37,7 +31,7 @@ export const createCheckoutSession = async (
       throw new Error("Stripe Secret key is not defined");
     }
     const cart = await tx.query.cartTable.findFirst({
-      where: (cart, { eq }) => eq(cart.userId, session.user.id),
+      where: (cart, { eq }) => eq(cart.userId, user.id),
       with: {
         shippingAddress: true,
         items: {

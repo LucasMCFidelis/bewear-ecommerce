@@ -1,25 +1,19 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 
+import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 const getUserAddress = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user.id) {
-    throw new Error("Usuário não autenticado");
-  }
+  const user = await verifyUser();
 
   try {
     const addresses = await db
       .select()
       .from(shippingAddressTable)
-      .where(eq(shippingAddressTable.userId, session.user.id))
+      .where(eq(shippingAddressTable.userId, user.id))
       .orderBy(shippingAddressTable.createdAt);
 
     return addresses;
