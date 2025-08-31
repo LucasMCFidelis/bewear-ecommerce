@@ -1,10 +1,9 @@
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import Addresses from "@/app/cart/identification/components/addresses";
-import { db } from "@/db";
-import { shippingAddressTable } from "@/db/schema";
+import { getCartData } from "@/app/data/cart/get-cart-data";
+import { getManyShippingAddresses } from "@/app/data/shippingAddress/get-many-shipping-addresses";
 import { auth } from "@/lib/auth";
 
 import ShippingAddressProvider from "../address-context";
@@ -15,25 +14,26 @@ const IdentificationPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user.id) redirect("/");
 
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
-    with: {
-      shippingAddress: true,
-      items: {
-        with: {
-          productVariant: { with: { product: true } },
-        },
-      },
-    },
-  });
-  if (!cart || cart.items.length === 0) redirect("/");
+  const [cart, shippingAddresses] = await Promise.all([
+    getCartData({
+      userId: session.user.id,
+      withShippingAddress: true,
+      withItems: true,
+      withProductVariant: true,
+      withProduct: true,
+    }),
+    getManyShippingAddresses({
+      userId: session.user.id,
+    }),
+  ]);
 
-  const shippingAddresses = await db.query.shippingAddressTable.findMany({
-    where: eq(shippingAddressTable.userId, session.user.id),
-  });
+  if (!cart.items || cart.items.length === 0) redirect("/");
 
   const cartTotalInCents = cart.items.reduce(
-    (acc, item) => acc + item.productVariant.priceInCents * item.quantity,
+    (acc, item) =>
+      acc +
+      (item.productVariant ? item.productVariant.priceInCents : 0) *
+        item.quantity,
     0
   );
 
@@ -45,20 +45,26 @@ const IdentificationPage = async () => {
         <Addresses shippingAddresses={shippingAddresses} />
         <CartSummary
           subtotalInCents={cartTotalInCents}
-          products={cart.items.map((item) => ({
-            id: item.productVariant.id,
-            name: item.productVariant.product.name,
-            variantName: item.productVariant.name,
-            quantity: item.quantity,
-            widthInCentimeters: item.productVariant.product.widthInCentimeters,
-            heightInCentimeters:
-              item.productVariant.product.heightInCentimeters,
-            lengthInCentimeters:
-              item.productVariant.product.lengthInCentimeters,
-            weightInGrams: item.productVariant.product.weightInGrams,
-            priceInCents: item.productVariant.priceInCents,
-            imageUrl: item.productVariant.imageUrl,
-          }))}
+          products={cart.items.map((item) => {
+            if (!item.productVariant || !item.productVariant.product)
+              throw new Error("Product or Product Variant not defined ");
+
+            return {
+              id: item.productVariant.id,
+              name: item.productVariant.product.name,
+              variantName: item.productVariant.name,
+              quantity: item.quantity,
+              widthInCentimeters:
+                item.productVariant.product.widthInCentimeters,
+              heightInCentimeters:
+                item.productVariant.product.heightInCentimeters,
+              lengthInCentimeters:
+                item.productVariant.product.lengthInCentimeters,
+              weightInGrams: item.productVariant.product.weightInGrams,
+              priceInCents: item.productVariant.priceInCents,
+              imageUrl: item.productVariant.imageUrl,
+            };
+          })}
         >
           <ButtonGoToPayment />
         </CartSummary>

@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+import { getOneShippingAddress } from "@/app/data/shippingAddress/get-one-shipping-address";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
@@ -26,16 +27,10 @@ export const updateDataShippingAddress = async ({
 
   const user = await verifyUser();
 
-  const updatedShippingAddress = await db.query.shippingAddressTable.findFirst({
-    where: (shippingAddress, { eq, and }) =>
-      and(
-        eq(shippingAddress.id, shippingAddressId),
-        eq(shippingAddress.userId, user.id)
-      ),
+  await getOneShippingAddress({
+    userId: user.id,
+    shippingAddressId: shippingAddressId,
   });
-  if (!updatedShippingAddress) {
-    throw new Error("Shipping address not found or unauthorized");
-  }
 
   const [[shippingAddress], isActualizedShippingCart] = await Promise.all([
     db

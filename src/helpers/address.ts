@@ -1,10 +1,11 @@
-import { shippingAddressTable } from "@/db/schema";
+import { ShippingAddressDTO } from "@/app/data/shippingAddress/shipping-address-dto";
 
 export function formatAddress({
   address,
 }: {
-  address: typeof shippingAddressTable.$inferSelect;
+  address: ShippingAddressDTO | null;
 }) {
+  if (!address) return "Endereço com problema para formatação";
   return `
   ${address.recipientName} • ${address.street}, ${address.number}${
     address.complement ? `, ${address.complement}` : ""

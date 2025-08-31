@@ -1,22 +1,20 @@
 "use server";
 
+import { CartDTO } from "@/app/data/cart/cart-dto";
+import { getCartData } from "@/app/data/cart/get-cart-data";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
 
-export const getCart = async () => {
+export const getCart = async (): Promise<CartDTO> => {
   const user = await verifyUser();
 
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, user.id),
-    with: {
-      shippingAddress: true,
-      items: {
-        with: {
-          productVariant: { with: { product: true } },
-        },
-      },
-    },
+  const cart = await getCartData({
+    userId: user.id,
+    withShippingAddress: true,
+    withItems: true,
+    withProductVariant: true,
+    withProduct: true,
   });
 
   if (!cart) {
@@ -27,16 +25,10 @@ export const getCart = async () => {
     return {
       ...newCart,
       items: [],
-      totalPriceInCents: 0,
+      cartTotalInCents: 0,
       shippingAddress: null,
     };
   }
 
-  return {
-    ...cart,
-    totalPriceInCents: cart.items.reduce(
-      (acc, item) => acc + item.productVariant.priceInCents * item.quantity,
-      0
-    ),
-  };
+  return cart;
 };

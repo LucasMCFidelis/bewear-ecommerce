@@ -8,10 +8,10 @@ import {
   CreateShippingAddressSchema,
   createShippingAddressSchema,
 } from "@/actions/create-shipping-address/schema";
+import { getManyShippingAddresses } from "@/app/data/shippingAddress/get-many-shipping-addresses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-address";
@@ -21,11 +21,12 @@ import AddressForm from "./address-form";
 import AddressItem from "./address-item";
 
 interface AddressesProps {
-  shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
+  shippingAddresses: Awaited<ReturnType<typeof getManyShippingAddresses>>;
 }
 
 const Addresses = ({ shippingAddresses }: AddressesProps) => {
-  const { selectedShippingAddress, setSelectedShippingAddress } = useShippingAddressContext();
+  const { selectedShippingAddress, setSelectedShippingAddress } =
+    useShippingAddressContext();
   const createShippingAddressMutation = useCreateShippingAddress();
   const { data: addresses, isPending: isAddressesPending } = useUserAddresses({
     initialData: shippingAddresses,
@@ -113,7 +114,9 @@ const Addresses = ({ shippingAddresses }: AddressesProps) => {
                     <AddressItem
                       key={address.id}
                       address={address}
-                      functionChangeSelectedShippingAddress={setSelectedShippingAddress}
+                      functionChangeSelectedShippingAddress={
+                        setSelectedShippingAddress
+                      }
                     />
                   </div>
                 </CardContent>

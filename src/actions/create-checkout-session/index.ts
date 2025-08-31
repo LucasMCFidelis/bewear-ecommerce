@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 
+import { getCartData } from "@/app/data/cart/get-cart-data";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartItemTable, cartTable, orderTable } from "@/db/schema";
@@ -30,16 +31,13 @@ export const createCheckoutSession = async (
     if (!process.env.STRIPE_SECRET_KEY) {
       throw new Error("Stripe Secret key is not defined");
     }
-    const cart = await tx.query.cartTable.findFirst({
-      where: (cart, { eq }) => eq(cart.userId, user.id),
-      with: {
-        shippingAddress: true,
-        items: {
-          with: {
-            productVariant: { with: { product: true } },
-          },
-        },
-      },
+    
+    const cart = await getCartData({
+      userId: user.id,
+      withItems: true,
+      withShippingAddress: true,
+      withProductVariant: true,
+      withProduct: true,
     });
 
     if (!cart || cart.items.length === 0) {

@@ -2,6 +2,8 @@
 
 import { eq } from "drizzle-orm";
 
+import { getCartData } from "@/app/data/cart/get-cart-data";
+import { getOneShippingAddress } from "@/app/data/shippingAddress/get-one-shipping-address";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
@@ -15,35 +17,22 @@ export const updateCartShippingAddress = async (
   data: UpdateCartShippingAddressSchema
 ) => {
   updateCartShippingAddressSchema.parse(data);
-
   const user = await verifyUser();
 
-  const shippingAddress = await db.query.shippingAddressTable.findFirst({
-    where: (shippingAddress, { eq, and }) =>
-      and(
-        eq(shippingAddress.id, data.shippingAddressId),
-        eq(shippingAddress.userId, user.id)
-      ),
-  });
-
-  if (!shippingAddress) {
-    throw new Error("Shipping address not found or unauthorized");
-  }
-
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, user.id),
-  });
-
-  if (!cart) {
-    throw new Error("Cart not found");
-  }
+  const [shippingAddress, cart] = await Promise.all([
+    getOneShippingAddress({
+      userId: user.id,
+      shippingAddressId: data.shippingAddressId,
+    }),
+    getCartData({ userId: user.id }),
+  ]);
 
   await db
     .update(cartTable)
     .set({
-      shippingAddressId: data.shippingAddressId,
+      shippingAddressId: shippingAddress.id,
     })
     .where(eq(cartTable.id, cart.id));
 
-  return { success: true, shippingAddressId: data.shippingAddressId };
+  return { success: true, shippingAddressId: shippingAddress.id };
 };

@@ -2,6 +2,7 @@
 
 import { eq } from "drizzle-orm";
 
+import { getOneShippingAddress } from "@/app/data/shippingAddress/get-one-shipping-address";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
@@ -18,17 +19,10 @@ export const deleteCartShippingAddress = async (
 
   const user = await verifyUser();
 
-  const shippingAddress = await db.query.shippingAddressTable.findFirst({
-    where: (shippingAddress, { eq, and }) =>
-      and(
-        eq(shippingAddress.id, data.shippingAddressId),
-        eq(shippingAddress.userId, user.id)
-      ),
+  const shippingAddress = await getOneShippingAddress({
+    userId: user.id,
+    shippingAddressId: data.shippingAddressId,
   });
-
-  if (!shippingAddress) {
-    throw new Error("Shipping address not found or unauthorized");
-  }
 
   await db
     .delete(shippingAddressTable)

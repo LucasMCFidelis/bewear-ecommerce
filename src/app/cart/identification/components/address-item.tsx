@@ -10,9 +10,9 @@ import {
   createShippingAddressSchema,
 } from "@/actions/create-shipping-address/schema";
 import { UpdateDataShippingAddressSchema } from "@/actions/update-data-shipping-address/schema";
+import { ShippingAddressDTO } from "@/app/data/shippingAddress/shipping-address-dto";
 import LoaderSpin from "@/components/common/loader-spin";
 import { Button } from "@/components/ui/button";
-import { shippingAddressTable } from "@/db/schema";
 import { formatAddress } from "@/helpers/address";
 import { useDeleteCartShippingAddress } from "@/hooks/mutations/use-delete-cart-shipping-address";
 import { useUpdateDataShippingAddress } from "@/hooks/mutations/use-update-data-shipping-address";
@@ -20,7 +20,7 @@ import { useUpdateDataShippingAddress } from "@/hooks/mutations/use-update-data-
 import AddressForm from "./address-form";
 
 interface AddressItemProps {
-  address: typeof shippingAddressTable.$inferSelect;
+  address: ShippingAddressDTO;
   functionChangeSelectedShippingAddress: Dispatch<
     SetStateAction<string | null>
   >;

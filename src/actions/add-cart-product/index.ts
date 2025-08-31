@@ -2,6 +2,7 @@
 
 import { eq } from "drizzle-orm";
 
+import { getCartData } from "@/app/data/cart/get-cart-data";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartItemTable, cartTable, productVariantTable } from "@/db/schema";
@@ -20,10 +21,9 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
     throw new Error("Product variant not found");
   }
 
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, user.id),
+  let {id: cartId} = await getCartData({
+    userId: user.id,
   });
-  let cartId = cart?.id;
   if (!cartId) {
     const [newCart] = await db
       .insert(cartTable)
