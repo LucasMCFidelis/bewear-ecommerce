@@ -49,7 +49,7 @@ export async function getCartData<
   WithItems,
   WithVariant,
   WithProduct
->): Promise<CartDTO<WithShipping, WithItems, WithVariant, WithProduct>> {
+>): Promise<CartDTO<WithShipping, WithItems, WithVariant, WithProduct> | undefined> {
   await verifyUser();
 
   const cart = await db.query.cartTable.findFirst({
@@ -72,10 +72,10 @@ export async function getCartData<
     },
   });
 
-  if (!cart) throw new Error("Cart is not found");
+  if (!cart) return;
 
   const cartTotalInCents =
-    cart.items?.reduce(
+    cart?.items?.reduce(
       (acc, item) =>
         "productVariant" in item && item.productVariant
           ? acc + item.productVariant.priceInCents * item.quantity
@@ -97,7 +97,7 @@ export async function getCartData<
   }
 
   if (withItems) {
-    dto.items = cart.items?.map((item) => {
+    dto.items = cart?.items?.map((item) => {
       const dtoItem: CartItemsDTO = { ...item };
 
       if (withProductVariant && hasProductVariant(item)) {

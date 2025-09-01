@@ -27,7 +27,7 @@ const IdentificationPage = async () => {
     }),
   ]);
 
-  if (!cart.items || cart.items.length === 0) redirect("/");
+  if (!cart || cart.items.length === 0) redirect("/");
 
   const cartTotalInCents = cart.items.reduce(
     (acc, item) =>

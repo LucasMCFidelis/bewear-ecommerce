@@ -21,9 +21,12 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
     throw new Error("Product variant not found");
   }
 
-  let {id: cartId} = await getCartData({
+  const cart = await getCartData({
     userId: user.id,
   });
+  if (!cart) throw new Error("Cart is not found");
+
+  let cartId = cart.id;
   if (!cartId) {
     const [newCart] = await db
       .insert(cartTable)

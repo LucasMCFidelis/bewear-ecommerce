@@ -26,6 +26,7 @@ export const updateCartShippingAddress = async (
     }),
     getCartData({ userId: user.id }),
   ]);
+  if (!cart) throw new Error("Cart is not found");
 
   await db
     .update(cartTable)

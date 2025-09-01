@@ -23,7 +23,7 @@ const ConfirmationPage = async () => {
     withProductVariant: true,
     withProduct: true,
   });
-  if (!cart.items || cart?.items.length === 0) {
+  if (!cart || cart?.items.length === 0) {
     redirect("/");
   }
   const cartTotalInCents = cart.items.reduce(
