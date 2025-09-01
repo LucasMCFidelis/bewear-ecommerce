@@ -1,4 +1,4 @@
-import { asc, desc } from "drizzle-orm";
+import { asc } from "drizzle-orm";
 import Image from "next/image";
 import Marquee from "react-fast-marquee";
 
@@ -6,16 +6,16 @@ import CategorySelector from "@/components/common/category-selector";
 import ProductsList from "@/components/common/products-list";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { db } from "@/db";
-import { categoryTable, productTable } from "@/db/schema";
+import { categoryTable } from "@/db/schema";
 import { getPngFiles } from "@/helpers/getPngFiles";
 
+import { getProducts } from "./data/products/get-products";
+
 export default async function Home() {
-  const products = await db.query.productTable.findMany({
-    with: { variants: true },
-  });
-  const newlyCreatedProducts = await db.query.productTable.findMany({
-    orderBy: [desc(productTable.createdAt)],
-    with: { variants: true },
+  const products = await getProducts({ withProductVariants: true });
+  const newlyCreatedProducts = await getProducts({
+    withProductVariants: true,
+    orderBy: [{ type: "desc", field: "createdAt" }],
   });
   const categories = await db.query.categoryTable.findMany({
     orderBy: [asc(categoryTable.name)],

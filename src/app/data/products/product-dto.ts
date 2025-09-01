@@ -1,4 +1,6 @@
-export interface ProductDTO {
+import { ProductVariantDTO } from "./product-variant-dto";
+
+export type ProductDTO<WithVariant extends boolean = false>  = {
   id: string;
   categoryId: string;
   name: string;
@@ -9,4 +11,6 @@ export interface ProductDTO {
   lengthInCentimeters: number;
   weightInGrams: number;
   createdAt: Date;
-}
+} & (WithVariant extends true? {
+  variants: Array<ProductVariantDTO>
+} : {variants?: Array<ProductVariantDTO>})

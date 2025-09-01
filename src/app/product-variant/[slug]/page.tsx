@@ -2,14 +2,12 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import { getProducts } from "@/app/data/products/get-products";
 import ProductsList from "@/components/common/products-list";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
-import { productTable, productVariantTable } from "@/db/schema";
+import { productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 
-import AddToCartButton from "./components/add-to-cart-button";
-import QuantitySelector from "./components/product-actions";
 import ProductActions from "./components/product-actions";
 import VariantSelector from "./components/variant-selector";
 
@@ -30,10 +28,12 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     return notFound();
   }
 
-  const likelyProducts = await db.query.productTable.findMany({
-    where: eq(productTable.categoryId, productVariant.product.categoryId),
-    with: { variants: true },
+  const likelyProducts = await getProducts({
+    withProductVariants: true,
+    where: [{ field: "categoryId", value: productVariant.product.categoryId }],
+    orderBy: [{ field: "name", type: "asc" }],
   });
+
   return (
     <>
       <div className="flex flex-col space-y-6 px-5">
