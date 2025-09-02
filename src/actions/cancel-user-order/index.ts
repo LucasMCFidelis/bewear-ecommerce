@@ -5,6 +5,7 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import Stripe from "stripe";
 
+import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { orderTable, productVariantTable } from "@/db/schema";
@@ -58,9 +59,8 @@ export const cancelOrderTransition = async ({
       .where(eq(orderTable.id, order.id)),
     stripe.checkout.sessions.expire(order.checkoutSessionId),
     order.items.forEach(async (item) => {
-      const productVariant = await tx.query.productVariantTable.findFirst({
-        where: (productVariant, { eq }) =>
-          eq(productVariant.id, item.productVariantId),
+      const productVariant = await getOneProductVariant({
+        where: [{ field: "id", value: item.productVariantId }],
       });
       if (!productVariant) {
         throw new Error("Product variant not found ");

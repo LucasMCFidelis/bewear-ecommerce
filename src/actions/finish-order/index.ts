@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { getCartData } from "@/app/data/cart/get-cart-data";
+import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { orderItemTable, orderTable, productVariantTable } from "@/db/schema";
@@ -69,9 +70,8 @@ export const finishOrder = async () => {
 
     const orderItemsPayload: Array<typeof orderItemTable.$inferInsert> = [];
     for (const item of cart.items) {
-      const productVariant = await tx.query.productVariantTable.findFirst({
-        where: (productVariant, { eq }) =>
-          eq(productVariant.id, item.productVariantId),
+      const productVariant = await getOneProductVariant({
+        where: [{ field: "id", value: item.productVariantId }],
       });
 
       if (!productVariant || productVariant.quantityInStock < item.quantity) {

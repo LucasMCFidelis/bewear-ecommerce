@@ -1,11 +1,9 @@
-import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { getProducts } from "@/app/data/products/get-products";
 import ProductsList from "@/components/common/products-list";
-import { db } from "@/db";
-import { productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 
 import ProductActions from "./components/product-actions";
@@ -17,11 +15,10 @@ interface ProductPageProps {
 
 const ProductPage = async ({ params }: ProductPageProps) => {
   const { slug } = await params;
-  const productVariant = await db.query.productVariantTable.findFirst({
-    where: eq(productVariantTable.slug, slug),
-    with: {
-      product: { with: { variants: true } },
-    },
+  const productVariant = await getOneProductVariant({
+    withProduct: true,
+    withVariants: true,
+    where: [{ field: "slug", value: slug }],
   });
 
   if (!productVariant) {

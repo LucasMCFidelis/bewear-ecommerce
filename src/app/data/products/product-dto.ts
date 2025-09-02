@@ -1,4 +1,4 @@
-import { ProductVariantDTO } from "./product-variant-dto";
+import { ProductVariantDTO } from "../product-variant/product-variant-dto";
 
 export type ProductDTO<WithVariant extends boolean = false>  = {
   id: string;

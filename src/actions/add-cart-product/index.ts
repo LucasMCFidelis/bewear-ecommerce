@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { getCartData } from "@/app/data/cart/get-cart-data";
+import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartItemTable, cartTable, productVariantTable } from "@/db/schema";
@@ -13,9 +14,8 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
   addProductToCartSchema.parse(data);
   const user = await verifyUser();
 
-  const productVariant = await db.query.productVariantTable.findFirst({
-    where: (productVariant, { eq }) =>
-      eq(productVariant.id, data.productVariantId),
+  const productVariant = await getOneProductVariant({
+    where: [{ field: "id", value: data.productVariantId }],
   });
   if (!productVariant) {
     throw new Error("Product variant not found");
