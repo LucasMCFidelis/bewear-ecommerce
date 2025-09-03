@@ -2,11 +2,11 @@ import "server-only";
 
 import { db } from "@/db";
 
+import { CartItemsDTO } from "../cart-item/cart-items-dto";
+import { ProductVariantDTO } from "../product-variant/product-variant-dto";
 import { ProductDTO } from "../products/product-dto";
-import { ProductVariantDTO } from "../products/product-variant-dto";
 import { verifyUser } from "../user/verify-user";
 import { CartDTO } from "./cart-dto";
-import { CartItemsDTO } from "./cart-items-dto";
 
 interface GetCartDataProps<
   WithShipping extends boolean,
@@ -49,7 +49,9 @@ export async function getCartData<
   WithItems,
   WithVariant,
   WithProduct
->): Promise<CartDTO<WithShipping, WithItems, WithVariant, WithProduct> | undefined> {
+>): Promise<
+  CartDTO<WithShipping, WithItems, WithVariant, WithProduct> | undefined
+> {
   await verifyUser();
 
   const cart = await db.query.cartTable.findFirst({
@@ -89,7 +91,6 @@ export async function getCartData<
     createdAt: cart.createdAt,
     cartTotalInCents,
     shippingAddressId: cart.shippingAddressId ?? null,
-    
   };
 
   if (withShippingAddress) {

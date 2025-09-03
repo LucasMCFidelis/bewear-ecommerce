@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import z from "zod";
 
+import { getOneCartItem } from "@/app/data/cart-item/get-one-cart-item";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartItemTable } from "@/db/schema";
@@ -15,11 +16,9 @@ export const removeProductFromCart = async (
   removeProductFromCartSchema.parse(data);
   const user = await verifyUser();
 
-  const cartItem = await db.query.cartItemTable.findFirst({
-    where: (cartItem, { eq }) => eq(cartItem.id, data.cartItemId),
-    with: {
-      cart: true,
-    },
+  const cartItem = await getOneCartItem({
+    where: [{ field: "id", value: data.cartItemId }],
+    withCart: true,
   });
   if (!cartItem) {
     throw new Error("Cart item not found");

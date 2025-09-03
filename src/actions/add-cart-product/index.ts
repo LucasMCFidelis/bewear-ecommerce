@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { getCartData } from "@/app/data/cart/get-cart-data";
+import { getOneCartItem } from "@/app/data/cart-item/get-one-cart-item";
 import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
@@ -48,10 +49,11 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
       throw new Error("Quantity required exceed  quantity in stock");
   }
 
-  const cartItem = await db.query.cartItemTable.findFirst({
-    where: (cartItem, { eq }) =>
-      eq(cartItem.cartId, cartId) &&
-      eq(cartItem.productVariantId, data.productVariantId),
+  const cartItem = await getOneCartItem({
+    where: [
+      { field: "cartId", value: cartId },
+      { field: "productVariantId", value: data.productVariantId },
+    ],
   });
   if (cartItem) {
     const totalQuantity = cartItem.quantity + data.quantity;
