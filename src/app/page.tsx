@@ -13,12 +13,12 @@ export default async function Home() {
   const products = await getProducts({ withProductVariants: true });
   const newlyCreatedProducts = await getProducts({
     withProductVariants: true,
-    orderBy: [{ type: "desc", field: "createdAt" }],
+    orderBy: [{ type: "desc", field: "CREATED_AT" }],
   });
   const categories = await getAllCategories({
     withProducts: true,
     withVariants: true,
-    orderBy: [{ type: "asc", field: "name" }],
+    orderBy: [{ type: "asc", field: "NAME" }],
   });
 
   const partnerBrandsLogos = getPngFiles({

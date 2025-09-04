@@ -3,10 +3,11 @@ import "server-only";
 import { db } from "@/db";
 import { categoryTable } from "@/db/schema";
 
+import { CategoryFields } from "../columns";
 import { mountOrderByClause, OrderByCondition } from "../mount-order-by-clause";
 import { CategoryDTO } from "./category-dto";
 
-type CategoryColumns = typeof categoryTable._.columns;
+type CategoryColumns = typeof CategoryFields;
 
 interface GetAllCategoriesProps<
   WithProducts extends boolean,
@@ -28,7 +29,11 @@ export async function getAllCategories<
   Array<CategoryDTO<WithProducts, WithVariants>> | undefined
 > {
   const orderByClause = orderBy
-    ? mountOrderByClause({ table: categoryTable, orderByList: orderBy })
+    ? mountOrderByClause({
+        table: categoryTable,
+        tableFields: CategoryFields,
+        orderByList: orderBy,
+      })
     : undefined;
 
   const categories = await db.query.categoryTable.findMany({

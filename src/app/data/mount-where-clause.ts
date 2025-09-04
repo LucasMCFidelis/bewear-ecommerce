@@ -1,25 +1,42 @@
 import { and, eq, SQL } from "drizzle-orm";
-import { AnyPgColumn } from "drizzle-orm/pg-core";
+
+import { mapFieldToColumn } from "./map-field-to-column";
 
 type Primitive = string | number | Date;
 
-export type WhereCondition<TColumns> = {
-  field: keyof TColumns;
+export type WhereCondition<TFieldsMap extends Record<string, string>> = {
+  field: keyof TFieldsMap;
   value: Primitive;
 };
 
-interface MountWhereClauseProps<TColumns extends Record<string, AnyPgColumn>> {
-  table: TColumns;
-  whereList: Array<WhereCondition<TColumns>>;
+interface MountWhereClauseProps<
+  TTable,
+  TFieldsMap extends Record<string, string>,
+> {
+  table: TTable;
+  tableFields: TFieldsMap;
+  whereList: Array<WhereCondition<TFieldsMap>>;
 }
 
-export function mountWhereClause<TColumns extends Record<string, AnyPgColumn>>({
+export function mountWhereClause<
+  TTable,
+  TFieldsMap extends Record<string, string>,
+>({
   table,
+  tableFields,
   whereList,
-}: MountWhereClauseProps<TColumns>): SQL | undefined {
+}: MountWhereClauseProps<TTable, TFieldsMap>): SQL | undefined {
   if (!whereList || whereList.length === 0) return undefined;
 
-  return and(
-    ...whereList.map((condition) => eq(table[condition.field], condition.value))
-  );
+  const parts = whereList.map((condition) => {
+    const column = mapFieldToColumn({
+      table,
+      tableFields,
+      condition,
+    });
+
+    return eq(column, condition.value);
+  });
+
+  return and(...parts);
 }

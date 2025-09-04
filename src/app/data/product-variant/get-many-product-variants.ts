@@ -3,12 +3,13 @@ import "server-only";
 import { db } from "@/db";
 import { productVariantTable } from "@/db/schema";
 
+import { ProductVariantFields } from "../columns";
 import { mountOrderByClause, OrderByCondition } from "../mount-order-by-clause";
 import { mountWhereClause, WhereCondition } from "../mount-where-clause";
 import { mapToProductVariantDTO } from "./map-to-product-variant-dto";
 import { ProductVariantDTO } from "./product-variant-dto";
 
-type ProductVariantColumns = typeof productVariantTable._.columns;
+type ProductVariantColumns = typeof ProductVariantFields;
 
 interface GetManyProductVariantProps<
   WithProduct extends boolean,
@@ -33,10 +34,15 @@ export async function getManyProductVariant<
 > {
   const whereClause = mountWhereClause({
     table: productVariantTable,
+    tableFields: ProductVariantFields,
     whereList: where,
   });
   const orderByClause = orderBy
-    ? mountOrderByClause({ table: productVariantTable, orderByList: orderBy })
+    ? mountOrderByClause({
+        table: productVariantTable,
+        tableFields: ProductVariantFields,
+        orderByList: orderBy,
+      })
     : undefined;
 
   const productVariantsRaw = await db.query.productVariantTable.findMany({

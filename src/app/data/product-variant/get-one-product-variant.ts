@@ -3,11 +3,12 @@ import "server-only";
 import { db } from "@/db";
 import { productVariantTable } from "@/db/schema";
 
+import { ProductVariantFields } from "../columns";
 import { mountWhereClause, WhereCondition } from "../mount-where-clause";
 import { mapToProductVariantDTO } from "./map-to-product-variant-dto";
 import { ProductVariantDTO } from "./product-variant-dto";
 
-type ProductVariantColumns = typeof productVariantTable._.columns;
+type ProductVariantColumns = typeof ProductVariantFields;
 
 interface GetOneProductVariantProps<
   WithProduct extends boolean,
@@ -30,6 +31,7 @@ export async function getOneProductVariant<
 > {
   const whereClause = mountWhereClause({
     table: productVariantTable,
+    tableFields: ProductVariantFields,
     whereList: where,
   });
   const productVariantRaw = await db.query.productVariantTable.findFirst({

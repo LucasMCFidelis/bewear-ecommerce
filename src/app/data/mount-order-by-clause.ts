@@ -1,29 +1,38 @@
 import { asc, desc, SQL } from "drizzle-orm";
-import { AnyPgColumn } from "drizzle-orm/pg-core";
 
-export interface OrderByCondition<
-  TColumns extends Record<string, AnyPgColumn>,
-> {
-  field: keyof TColumns;
+import { mapFieldToColumn } from "./map-field-to-column";
+
+export interface OrderByCondition<TFieldsMap extends Record<string, string>> {
+  field: keyof TFieldsMap;
   type: "asc" | "desc";
 }
 
 interface MountOrderByClauseProps<
-  TColumns extends Record<string, AnyPgColumn>,
+  TTable,
+  TFieldsMap extends Record<string, string>,
 > {
-  table: TColumns;
-  orderByList: Array<OrderByCondition<TColumns>>;
+  table: TTable;
+  tableFields: TFieldsMap;
+  orderByList: Array<OrderByCondition<TFieldsMap>>;
 }
 
 export function mountOrderByClause<
-  TColumns extends Record<string, AnyPgColumn>,
+  TTable,
+  TFieldsMap extends Record<string, string>,
 >({
   table,
+  tableFields,
   orderByList,
-}: MountOrderByClauseProps<TColumns>): Array<SQL> | undefined {
+}: MountOrderByClauseProps<TTable, TFieldsMap>): Array<SQL> | undefined {
   if (!orderByList || orderByList.length === 0) return undefined;
 
-  return orderByList.map((item) =>
-    item.type === "asc" ? asc(table[item.field]) : desc(table[item.field])
-  );
+  return orderByList.map((condition) => {
+    const column = mapFieldToColumn({
+      table,
+      tableFields,
+      condition,
+    });
+
+    return condition.type === "asc" ? asc(column) : desc(column);
+  });
 }

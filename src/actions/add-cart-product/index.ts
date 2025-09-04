@@ -16,7 +16,7 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
   const user = await verifyUser();
 
   const productVariant = await getOneProductVariant({
-    where: [{ field: "id", value: data.productVariantId }],
+    where: [{ field: "ID", value: data.productVariantId }],
   });
   if (!productVariant) {
     throw new Error("Product variant not found");
@@ -51,8 +51,8 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
 
   const cartItem = await getOneCartItem({
     where: [
-      { field: "cartId", value: cartId },
-      { field: "productVariantId", value: data.productVariantId },
+      { field: "CART_ID", value: cartId },
+      { field: "PRODUCT_VARIANT_ID", value: data.productVariantId },
     ],
   });
   if (cartItem) {

@@ -71,7 +71,7 @@ export const finishOrder = async () => {
     const orderItemsPayload: Array<typeof orderItemTable.$inferInsert> = [];
     for (const item of cart.items) {
       const productVariant = await getOneProductVariant({
-        where: [{ field: "id", value: item.productVariantId }],
+        where: [{ field: "ID", value: item.productVariantId }],
       });
 
       if (!productVariant || productVariant.quantityInStock < item.quantity) {

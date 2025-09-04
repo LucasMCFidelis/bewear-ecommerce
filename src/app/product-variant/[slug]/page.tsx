@@ -18,7 +18,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   const productVariant = await getOneProductVariant({
     withProduct: true,
     withVariants: true,
-    where: [{ field: "slug", value: slug }],
+    where: [{ field: "SLUG", value: slug }],
   });
 
   if (!productVariant) {
@@ -27,8 +27,8 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
   const likelyProducts = await getProducts({
     withProductVariants: true,
-    where: [{ field: "categoryId", value: productVariant.product.categoryId }],
-    orderBy: [{ field: "name", type: "asc" }],
+    where: [{ field: "CATEGORY_ID", value: productVariant.product.categoryId }],
+    orderBy: [{ field: "NAME", type: "asc" }],
   });
 
   return (

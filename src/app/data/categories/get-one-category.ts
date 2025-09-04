@@ -3,10 +3,11 @@ import "server-only";
 import { db } from "@/db";
 import { categoryTable } from "@/db/schema";
 
+import { CategoryFields } from "../columns";
 import { mountWhereClause, WhereCondition } from "../mount-where-clause";
 import { CategoryDTO } from "./category-dto";
 
-type CategoryColumns = typeof categoryTable._.columns;
+type CategoryColumns = typeof CategoryFields;
 
 interface GetOneCategoryProps<
   WithProducts extends boolean,
@@ -27,8 +28,12 @@ export async function getOneCategory<
 }: GetOneCategoryProps<WithProducts, WithVariants>): Promise<
   CategoryDTO<WithProducts, WithVariants> | undefined
 > {
-  const whereClause = mountWhereClause({ table: categoryTable, whereList: where })
-    
+  const whereClause = mountWhereClause({
+    table: categoryTable,
+    tableFields: CategoryFields,
+    whereList: where,
+  });
+
   const category = await db.query.categoryTable.findFirst({
     ...(whereClause && { where: whereClause }),
     ...(withProducts && {

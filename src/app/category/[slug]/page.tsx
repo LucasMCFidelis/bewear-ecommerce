@@ -12,7 +12,7 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
   const category = await getOneCategory({
     withProducts: true,
     withVariants: true,
-    where: [{ field: "slug", value: slug }],
+    where: [{ field: "SLUG", value: slug }],
   });
 
   if (!category) {

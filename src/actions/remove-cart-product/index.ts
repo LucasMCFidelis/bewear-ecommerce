@@ -17,7 +17,7 @@ export const removeProductFromCart = async (
   const user = await verifyUser();
 
   const cartItem = await getOneCartItem({
-    where: [{ field: "id", value: data.cartItemId }],
+    where: [{ field: "ID", value: data.cartItemId }],
     withCart: true,
   });
   if (!cartItem) {

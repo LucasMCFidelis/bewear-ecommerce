@@ -3,11 +3,12 @@ import "server-only";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
 
+import { ProductFields } from "../columns";
 import { mountOrderByClause, OrderByCondition } from "../mount-order-by-clause";
 import { mountWhereClause, WhereCondition } from "../mount-where-clause";
 import { ProductDTO } from "./product-dto";
 
-type ProductColumns = typeof productTable._.columns;
+type ProductColumns = typeof ProductFields;
 
 interface GetProductsProps<WithVariant extends boolean> {
   withProductVariants: WithVariant;
@@ -21,10 +22,18 @@ export async function getProducts<WithVariant extends boolean>({
   where,
 }: GetProductsProps<WithVariant>): Promise<Array<ProductDTO<WithVariant>>> {
   const whereClause = where
-    ? mountWhereClause({ table: productTable, whereList: where })
+    ? mountWhereClause({
+        table: productTable,
+        tableFields: ProductFields,
+        whereList: where,
+      })
     : undefined;
   const orderByClause = orderBy
-    ? mountOrderByClause({ table: productTable, orderByList: orderBy })
+    ? mountOrderByClause({
+        table: productTable,
+        tableFields: ProductFields,
+        orderByList: orderBy,
+      })
     : undefined;
 
   const products = await db.query.productTable.findMany({

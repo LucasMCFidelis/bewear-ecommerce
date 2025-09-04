@@ -3,11 +3,12 @@ import "server-only";
 import { db } from "@/db";
 import { cartItemTable } from "@/db/schema";
 
+import { CartItemFields } from "../columns";
 import { mountWhereClause, WhereCondition } from "../mount-where-clause";
 import { CartItemsDTO } from "./cart-items-dto";
 import { mapToCartItemDTO } from "./map-to-cart-item-dto";
 
-type CartItemColumns = typeof cartItemTable._.columns;
+type CartItemColumns = typeof CartItemFields;
 
 interface GetOneCartItemProps<
   WithCart extends boolean,
@@ -30,15 +31,16 @@ export async function getOneCartItem<
 > {
   const whereClause = mountWhereClause({
     table: cartItemTable,
+    tableFields: CartItemFields,
     whereList: where,
   });
 
   const cartItem = await db.query.cartItemTable.findFirst({
     ...(whereClause && { where: whereClause }),
     with: {
-        ...(withCart && {cart: true}),
-        ...(withVariant && {productVariant: true}),
-    }
+      ...(withCart && { cart: true }),
+      ...(withVariant && { productVariant: true }),
+    },
   });
 
   if (!cartItem) {
