@@ -18,7 +18,7 @@ export const useUpdateCartShippingAddress = () => {
       updateCartShippingAddress(data),
     onSuccess: (updatedShippingAddress) => {
       queryClient.invalidateQueries({
-        queryKey: getCalculateShippingCostQueryKey(updatedShippingAddress.shippingAddressId),
+        queryKey: getCalculateShippingCostQueryKey(updatedShippingAddress.shippingAddressId, null),
       });
       queryClient.invalidateQueries({
         queryKey: getUserCartQueryKey(),

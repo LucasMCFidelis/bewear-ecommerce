@@ -6,7 +6,7 @@ import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
 
-export const getCart = async (): Promise<CartDTO> => {
+export const getCart = async (): Promise<CartDTO<true, true, true, true>> => {
   const user = await verifyUser();
 
   const cart = await getCartData({

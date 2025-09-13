@@ -1,23 +1,17 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getCartData } from "@/app/data/cart/get-cart-data";
+import { verifyUser } from "@/app/data/user/verify-user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatAddress } from "@/helpers/address";
-import { auth } from "@/lib/auth";
 
 import CartSummary from "../components/cart-summary";
-import FinishOrderButton from "./components/finish-order-button";
+import FinishOrderButtonToCart from "./components/finish-order-button-to-cart";
 
 const ConfirmationPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user.id) {
-    redirect("/");
-  }
+  const user = await verifyUser();
   const cart = await getCartData({
-    userId: session.user.id,
+    userId: user.id,
     withShippingAddress: true,
     withItems: true,
     withProductVariant: true,
@@ -71,7 +65,7 @@ const ConfirmationPage = async () => {
           imageUrl: item.productVariant!.imageUrl,
         }))}
       >
-        <FinishOrderButton />
+        <FinishOrderButtonToCart />
       </CartSummary>
     </div>
   );

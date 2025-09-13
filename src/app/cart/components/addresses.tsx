@@ -16,7 +16,7 @@ import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-address";
 
-import { useShippingAddressContext } from "../../address-context";
+import { useShippingAddressContext } from "../address-context";
 import AddressForm from "./address-form";
 import AddressItem from "./address-item";
 

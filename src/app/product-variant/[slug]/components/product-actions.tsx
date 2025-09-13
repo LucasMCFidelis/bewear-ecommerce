@@ -1,27 +1,53 @@
 "use client";
 
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
+import { ProductVariantDTO } from "@/app/data/product-variant/product-variant-dto";
 import { Button } from "@/components/ui/button";
-import { productVariantTable } from "@/db/schema";
+import { useCreateDirectBuyPretension } from "@/hooks/mutations/use-create-direct-buy-pretension";
+import { authClient } from "@/lib/auth-client";
 
 import AddToCartButton from "./add-to-cart-button";
 
 interface ProductActionsProps {
-  productVariant: typeof productVariantTable.$inferSelect;
+  productVariant: ProductVariantDTO;
 }
 
 const ProductActions = ({ productVariant }: ProductActionsProps) => {
-  const [quantity, setQuantity] = useState<number>(1);
+  const { data: session } = authClient.useSession();
+  if (!session?.user.id) redirect("/");
+
+  const [{ slug, quantity }, setProductStates] = useQueryStates({
+    slug: parseAsString.withDefault(productVariant.slug),
+    quantity: parseAsInteger.withDefault(1),
+  });
+
+  const createDirectBuyPretensionMutation = useCreateDirectBuyPretension();
   const quantityMax = productVariant.quantityInStock;
 
+  console.log("slug", slug);
+
   const handleDecrement = () => {
-    setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
+    const newQuantity = quantity > 1 ? quantity - 1 : quantity;
+    setProductStates({ quantity: newQuantity });
   };
 
   const handleIncrement = () => {
-    setQuantity((prev) => (prev < quantityMax ? prev + 1 : prev));
+    const newQuantity = quantity < quantityMax ? quantity + 1 : quantity;
+    setProductStates({ quantity: newQuantity });
+  };
+
+  const handleDirectBuy = async () => {
+    const directBuy = await createDirectBuyPretensionMutation.mutateAsync({
+      productVariantId: productVariant.id,
+      priceInCents: productVariant.priceInCents,
+      userId: session?.user.id,
+      quantity,
+    });
+
+    redirect(`/cart/direct-buy/${directBuy.id}`)
   };
 
   return (
@@ -50,7 +76,12 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
           quantity={quantity}
           disabled={quantity > productVariant.quantityInStock}
         />
-        <Button className="rounded-full" size={"lg"}>
+        <Button
+          className="rounded-full"
+          size={"lg"}
+          disabled={createDirectBuyPretensionMutation.isPending}
+          onClick={handleDirectBuy}
+        >
           Comprar Agora
         </Button>
       </div>

@@ -1,14 +1,14 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import Addresses from "@/app/cart/identification/components/addresses";
+import Addresses from "@/app/cart/components/addresses";
 import { getCartData } from "@/app/data/cart/get-cart-data";
 import { getManyShippingAddresses } from "@/app/data/shippingAddress/get-many-shipping-addresses";
 import { auth } from "@/lib/auth";
 
 import ShippingAddressProvider from "../address-context";
+import ButtonGoToPayment from "../components/button-go-to-payment";
 import CartSummary from "../components/cart-summary";
-import ButtonGoToPayment from "./components/button-go-to-payment";
 
 const IdentificationPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -66,7 +66,7 @@ const IdentificationPage = async () => {
             };
           })}
         >
-          <ButtonGoToPayment />
+          <ButtonGoToPayment path="/cart/confirmation" />
         </CartSummary>
       </div>
     </ShippingAddressProvider>

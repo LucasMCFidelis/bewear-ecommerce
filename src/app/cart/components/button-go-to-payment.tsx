@@ -3,16 +3,27 @@
 import { useRouter } from "next/navigation";
 import { ButtonHTMLAttributes } from "react";
 
+import { CalculateShippingCostProps } from "@/actions/calculate-shipping-cost";
 import { Button } from "@/components/ui/button";
-import { useCalculateShippingCost } from "@/hooks/queries/use-calculate-shipping-cost";
+import { useResolveCalculateShippingCostToCartOrDirect } from "@/hooks/queries/use-resolve-calculate-shipping-cost";
 import { cn } from "@/lib/utils";
 
-import { useShippingAddressContext } from "../../address-context";
+import { useShippingAddressContext } from "../address-context";
 
-const ButtonGoToPayment = ({
+export type ButtonGoToPaymentProps<
+  TypeDataBase extends "to-cart" | "to-direct",
+> = ButtonHTMLAttributes<HTMLButtonElement> &
+  CalculateShippingCostProps<TypeDataBase> & {
+    path: string;
+  };
+
+const ButtonGoToPayment = <TypeDataBase extends "to-cart" | "to-direct">({
+  path,
   className,
+  directBuyId,
+  typeDataBase,
   ...rest
-}: ButtonHTMLAttributes<HTMLButtonElement>) => {
+}: ButtonGoToPaymentProps<TypeDataBase>) => {
   const router = useRouter();
   const { selectedShippingAddress } = useShippingAddressContext();
 
@@ -20,10 +31,14 @@ const ButtonGoToPayment = ({
     isPending: isLoadingCalculateShippingCost,
     isError: isErrorInCalculateShippingCost,
     isRefetching: isRefetchingCalculateShippingCost,
-  } = useCalculateShippingCost(selectedShippingAddress);
+  } = useResolveCalculateShippingCostToCartOrDirect({
+    typeDataBase,
+    shippingAddressId: selectedShippingAddress,
+    directBuyId,
+  });
 
   const handleGoToPayment = () => {
-    router.push("/cart/confirmation");
+    router.push(path);
   };
 
   return (

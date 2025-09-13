@@ -19,7 +19,7 @@ export const useUpdateDataShippingAddress = (shippingAddressId: string) => {
       updateDataShippingAddress({ shippingAddressId, data }),
     onSuccess: (updatedDataShippingAddress) => {
       queryClient.invalidateQueries({
-        queryKey: getCalculateShippingCostQueryKey(updatedDataShippingAddress.id),
+        queryKey: getCalculateShippingCostQueryKey(updatedDataShippingAddress.id, null),
       });
       queryClient.invalidateQueries({
         queryKey: getUserAddressesQueryKey(),

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
+import { useFinishOrderToCart } from "@/hooks/mutations/use-finish-order-to-cart";
 
 import CheckoutDialog from "../components/checkout-dialog";
 
 const CheckoutCancelPage = () => {
-  const { error: errorInFinishOrder } = useFinishOrder();
+  const { error: errorInFinishOrder } = useFinishOrderToCart();
 
   return (
     <CheckoutDialog

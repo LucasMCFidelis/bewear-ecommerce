@@ -31,6 +31,7 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
     fields: [userTable.id],
     references: [cartTable.userId],
   }),
+  directBuyPretensions: many(directBuyPretensionTable),
   orders: many(orderTable),
 }));
 
@@ -217,6 +218,33 @@ export const cartItemRelations = relations(cartItemTable, ({ one }) => ({
     references: [productVariantTable.id],
   }),
 }));
+
+export const directBuyPretensionTable = pgTable("buy_direct_pretension", {
+  id: uuid().primaryKey().defaultRandom(),
+  productVariantId: uuid("product_variant_id")
+    .notNull()
+    .references(() => productVariantTable.id, { onDelete: "restrict" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  quantity: integer("quantity").notNull(),
+  priceInCents: integer("price_in_cents").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const directBuyPretensionRelations = relations(
+  directBuyPretensionTable,
+  ({ one }) => ({
+    user: one(userTable, {
+      fields: [directBuyPretensionTable.userId],
+      references: [userTable.id],
+    }),
+    productVariant: one(productVariantTable, {
+      fields: [directBuyPretensionTable.productVariantId],
+      references: [productVariantTable.id],
+    }),
+  })
+);
 
 export const orderStatus = pgEnum("order_status", [
   "pending",

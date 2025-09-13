@@ -110,6 +110,15 @@ export const CartItemFields = {
   CREATED_AT: "createdAt",
 } as const;
 
+export const DirectBuyPretensionFields = {
+  ID: "id",
+  PRODUCT_VARIANT_ID: "productVariantId",
+  USER_ID: "userId",
+  QUANTITY: "quantity",
+  PRICE_IN_CENTS: "priceInCents",
+  CREATED_AT: "createdAt",
+} as const;
+
 export const OrderFields = {
   ID: "id",
   USER_ID: "userId",

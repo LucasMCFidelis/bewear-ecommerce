@@ -3,15 +3,16 @@
 import Image from "next/image";
 import React from "react";
 
+import { CalculateShippingCostProps } from "@/actions/calculate-shipping-cost";
 import LoaderSpin from "@/components/common/loader-spin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatCentsToBRL } from "@/helpers/money";
-import { useCalculateShippingCost } from "@/hooks/queries/use-calculate-shipping-cost";
+import { useResolveCalculateShippingCostToCartOrDirect } from "@/hooks/queries/use-resolve-calculate-shipping-cost";
 
 import { useShippingAddressContext } from "../address-context";
 
-interface CartSummaryProps {
+type CartSummaryProps<TypeDataBase extends "to-cart" | "to-direct"> = {
   subtotalInCents: number;
   products: Array<{
     id: string;
@@ -26,13 +27,15 @@ interface CartSummaryProps {
     imageUrl: string;
   }>;
   children?: React.ReactNode;
-}
+} & CalculateShippingCostProps<TypeDataBase>;
 
-const CartSummary = ({
+const CartSummary = <TypeDataBase extends "to-cart" | "to-direct">({
   subtotalInCents,
   products,
   children,
-}: CartSummaryProps) => {
+  typeDataBase,
+  directBuyId,
+}: CartSummaryProps<TypeDataBase>) => {
   const { selectedShippingAddress } = useShippingAddressContext();
 
   const {
@@ -40,7 +43,11 @@ const CartSummary = ({
     isPending: isLoadingCalculateShippingCost,
     isError: isErrorInCalculateShippingCost,
     isRefetching: isRefetchingCalculateShippingCost,
-  } = useCalculateShippingCost(selectedShippingAddress);
+  } = useResolveCalculateShippingCostToCartOrDirect({
+    typeDataBase,
+    shippingAddressId: selectedShippingAddress,
+    directBuyId,
+  });
 
   const shippingCostInCents = data?.data.freightInCents;
   const defaultShippingCostInCents = 2000;
