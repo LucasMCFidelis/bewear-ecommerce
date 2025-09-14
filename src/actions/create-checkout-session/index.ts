@@ -5,6 +5,7 @@ import Stripe from "stripe";
 
 import { getCartData } from "@/app/data/cart/get-cart-data";
 import { OrderItemDTO } from "@/app/data/order-item/order-item-dto";
+import { getOneUserOrder } from "@/app/data/orders/get-one-user-order";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { cartItemTable, cartTable, orderTable } from "@/db/schema";
@@ -29,12 +30,15 @@ async function createCheckoutSession({
     throw new Error("Stripe Secret key is not defined");
   }
 
+  const expiresAt = Math.floor(Date.now() / 1000) + 30 * 60;
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const newSession = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
+    expires_at: expiresAt,
     metadata: {
       orderId: data.orderId,
     },
@@ -78,12 +82,19 @@ export const createCheckoutSessionToCart = async (
 
   const user = await verifyUser();
 
-  const order = await db.query.orderTable.findFirst({
-    where: (order, { eq, and }) =>
-      and(eq(order.id, orderId), eq(order.userId, user.id)),
-    with: { items: { with: { productVariant: { with: { product: true } } } } },
+  const order = await getOneUserOrder({
+    userId: user.id,
+    where: [
+      { field: "ID", value: data.orderId },
+      { field: "USER_ID", value: user.id },
+    ],
+    withItems: true,
+    withVariant: true,
+    withProduct: true,
   });
-  if (!order) throw new Error("Order not found or unauthorized");
+  if (!order || !order.items)
+    throw new Error("Order not found or unauthorized");
+  const orderItems = order.items as OrderItemDTO<true, true>[];
 
   const checkoutSession = await db.transaction(async (tx) => {
     const cart = await getCartData({
@@ -100,7 +111,7 @@ export const createCheckoutSessionToCart = async (
 
     const newSession = await createCheckoutSession({
       data,
-      orderItems: order.items,
+      orderItems,
       shippingCostInCents: order.shippingCostInCents,
     });
 
@@ -115,6 +126,47 @@ export const createCheckoutSessionToCart = async (
       tx.delete(cartTable).where(eq(cartTable.id, cart.id)),
       tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id)),
     ]);
+
+    return newSession;
+  });
+
+  return checkoutSession;
+};
+
+export const createCheckoutSessionToDirect = async (
+  data: CreateCheckoutSessionSchema
+) => {
+  const { orderId } = createCheckoutSessionSchema.parse(data);
+
+  const user = await verifyUser();
+
+  const order = await getOneUserOrder({
+    userId: user.id,
+    where: [
+      { field: "ID", value: data.orderId },
+      { field: "USER_ID", value: user.id },
+    ],
+    withItems: true,
+    withVariant: true,
+    withProduct: true,
+  });
+  if (!order) throw new Error("Order not found or unauthorized");
+  const orderItems = order.items as OrderItemDTO<true, true>[];
+
+  const checkoutSession = await db.transaction(async (tx) => {
+    const newSession = await createCheckoutSession({
+      data,
+      orderItems,
+      shippingCostInCents: order.shippingCostInCents,
+    });
+
+    await tx
+      .update(orderTable)
+      .set({
+        checkoutSessionId: newSession.id,
+        checkoutSessionUrl: newSession.url,
+      })
+      .where(eq(orderTable.id, orderId));
 
     return newSession;
   });
