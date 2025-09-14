@@ -74,7 +74,7 @@ export async function mapToOrderDTO<
     shippingCostInCents: data.shippingCostInCents,
     totalPriceInCents: data.totalPriceInCents,
     status: data.status as "pending" | "paid" | "canceled",
-    checkoutSessionId: canSee ? data.checkoutSessionId : null,
+    checkoutSessionId: data.checkoutSessionId,
     checkoutSessionUrl: canSee ? data.checkoutSessionUrl : null,
   };
 
