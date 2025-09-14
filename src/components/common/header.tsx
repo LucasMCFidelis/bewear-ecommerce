@@ -6,11 +6,12 @@ import {
   LogOutIcon,
   MenuIcon,
   ShoppingBagIcon,
-  Truck,
+  Truck
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { CategoryDTO } from "@/app/data/categories/category-dto";
 import { useGlobalStates } from "@/hooks/states/use-global-states";
 import { authClient } from "@/lib/auth-client";
 
@@ -27,7 +28,11 @@ import {
 import Cart from "./cart";
 import MenuLink from "./menu-link";
 
-const Header = () => {
+interface HeaderProps {
+  categories?: Array<CategoryDTO>;
+}
+
+const Header = ({ categories }: HeaderProps) => {
   const { data: session } = authClient.useSession();
   const [{ isSheetMenuOpen }, setGlobalState] = useGlobalStates();
 
@@ -117,6 +122,18 @@ const Header = () => {
                   </Button>
                 </div>
               )}
+
+              <div>
+                {categories &&
+                  categories.map((category) => (
+                    <MenuLink
+                      key={category.id}
+                      href={`/category/${category.slug}`}
+                    >
+                      {category.name}
+                    </MenuLink>
+                  ))}
+              </div>
             </div>
           </SheetContent>
         </Sheet>
