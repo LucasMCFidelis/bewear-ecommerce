@@ -1,24 +1,21 @@
-import { desc, eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { db } from "@/db";
-import { orderTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
-
+import { getManyUserOrders } from "../data/orders/get-many-user-orders";
+import { verifyUser } from "../data/user/verify-user";
 import OrdersList from "./components/orders-list";
 
 const OrdersPage = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user.id) redirect("/");
+  const user = await verifyUser();
+  if (!user.id) redirect("/");
 
-  const orders = await db.query.orderTable.findMany({
-    orderBy: [desc(orderTable.createdAt)],
-    where: eq(orderTable.userId, session.user.id),
-   with: {
-      items: { with: { productVariant: { with: { product: true } } } },
-      shippingAddress: true,
-    },
+  const orders = await getManyUserOrders({
+    userId: user.id,
+    withItems: true,
+    withVariant: true,
+    withProduct: true,
+    withShipping: true,
+    where: [{ field: "USER_ID", value: user.id }],
+    orderBy: [{ field: "CREATED_AT", type: "desc" }],
   });
 
   return (

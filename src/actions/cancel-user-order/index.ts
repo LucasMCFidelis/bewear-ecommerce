@@ -5,6 +5,9 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import Stripe from "stripe";
 
+import { OrderFields } from "@/app/data/columns";
+import { WhereCondition } from "@/app/data/mount-where-clause";
+import { getOneUserOrder } from "@/app/data/orders/get-one-user-order";
 import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
@@ -13,6 +16,7 @@ import * as Schema from "@/db/schema";
 
 import { CancelUserOrderSchema, cancelUserOrderSchema } from "./schema";
 
+type OrdersColumns = typeof OrderFields;
 interface cancelOrderTransitionProps {
   data: CancelUserOrderSchema;
   userId: string | null;
@@ -34,17 +38,21 @@ export const cancelOrderTransition = async ({
   }
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  const order = await tx.query.orderTable.findFirst({
-    where: (order, { eq, and }) => {
-      if (userId) {
-        return and(eq(order.id, data.orderId), eq(order.userId, userId));
-      } else {
-        return eq(order.id, data.orderId);
-      }
-    },
-    with: { items: true },
+  const where: Array<WhereCondition<OrdersColumns>> = [
+    { field: "ID" as keyof OrdersColumns, value: data.orderId },
+    ...(userId
+      ? [{ field: "USER_ID" as keyof OrdersColumns, value: userId }]
+      : []),
+  ];
+
+  const order = await getOneUserOrder({
+    userId: userId ?? "",
+    where,
+    withItems: true,
   });
-  if (!order) throw new Error("Order not found or Unauthorized");
+
+  if (!order || !order.items)
+    throw new Error("Order not found or Unauthorized");
   if (!order.checkoutSessionId)
     throw new Error("Order haven't Checkout Session associated");
 

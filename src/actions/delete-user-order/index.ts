@@ -2,6 +2,7 @@
 
 import { eq } from "drizzle-orm";
 
+import { getOneUserOrder } from "@/app/data/orders/get-one-user-order";
 import { verifyUser } from "@/app/data/user/verify-user";
 import { db } from "@/db";
 import { orderTable } from "@/db/schema";
@@ -12,9 +13,12 @@ export const deleteUserOrder = async (data: DeleteUserOrderSchema) => {
   deleteUserOrderSchema.parse(data);
   const user = await verifyUser();
 
-  const order = await db.query.orderTable.findFirst({
-    where: (order, { eq, and }) =>
-      and(eq(order.id, data.orderId), eq(order.userId, user.id)),
+  const order = await getOneUserOrder({
+    userId: user.id,
+    where: [
+      { field: "ID", value: data.orderId },
+      { field: "USER_ID", value: user.id },
+    ],
   });
   if (!order) throw new Error("Order not found or unauthorized");
 

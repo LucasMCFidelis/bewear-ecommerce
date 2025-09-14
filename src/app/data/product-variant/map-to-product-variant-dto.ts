@@ -2,12 +2,31 @@ import { productTable, productVariantTable } from "@/db/schema";
 
 import { ProductVariantDTO } from "./product-variant-dto";
 
-export function mapToProductVariantDTO<WithProduct extends boolean = false, WithVariants extends boolean = false>(
+interface MapToProductVariantDTOProps<
+  WithProduct extends boolean,
+  WithVariants extends boolean,
+> {
   data: typeof productVariantTable.$inferSelect & {
-    product?: typeof productTable.$inferSelect  & {variants: Array<typeof productVariantTable.$inferSelect>};
-  },
-  withProduct?: WithProduct
-): ProductVariantDTO<WithProduct, WithVariants> {
+    product?: typeof productTable.$inferSelect & {
+      variants?: Array<typeof productVariantTable.$inferSelect>;
+    };
+  };
+  options: {
+    withProduct?: WithProduct;
+    withVariants?: WithVariants;
+  };
+}
+
+export function mapToProductVariantDTO<
+  WithProduct extends boolean,
+  WithVariants extends boolean,
+>({
+  data,
+  options,
+}: MapToProductVariantDTOProps<WithProduct, WithVariants>): ProductVariantDTO<
+  WithProduct,
+  WithVariants
+> {
   const base = {
     id: data.id,
     name: data.name,
@@ -19,15 +38,31 @@ export function mapToProductVariantDTO<WithProduct extends boolean = false, With
     imageUrl: data.imageUrl,
     quantityInStock: data.quantityInStock,
   };
-  if (withProduct) {
+
+  if (options.withProduct && data.product) {
     return {
       ...base,
-      product: data.product,
-    } as ProductVariantDTO<WithProduct,WithVariants>;
-  } else {
-    return {
-      ...base,
-      product: data.product ? data.product : undefined,
+      product: {
+        ...data.product,
+        variants: options.withVariants
+          ? (data.product.variants?.map((variant) =>
+              mapToProductVariantDTO({
+                data: variant,
+                options: { withProduct: false, withVariants: false },
+              })
+            ) ?? [])
+          : [],
+      },
     } as ProductVariantDTO<WithProduct, WithVariants>;
   }
+
+  return {
+    ...base,
+    product: data.product
+      ? {
+          ...data.product,
+          variants: [],
+        }
+      : undefined,
+  } as ProductVariantDTO<WithProduct, WithVariants>;
 }

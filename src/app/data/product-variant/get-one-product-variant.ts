@@ -49,5 +49,8 @@ export async function getOneProductVariant<
     return undefined;
   }
 
-  return mapToProductVariantDTO(productVariantRaw, withProduct);
+  return mapToProductVariantDTO({
+    data: productVariantRaw,
+    options: { withProduct, withVariants },
+  });
 }

@@ -30,7 +30,7 @@ export async function getManyProductVariant<
   withProduct,
   withVariants,
 }: GetManyProductVariantProps<WithProduct, WithVariants>): Promise<
-  Array<ProductVariantDTO<WithProduct>>
+  Array<ProductVariantDTO<WithProduct, WithVariants>>
 > {
   const whereClause = mountWhereClause({
     table: productVariantTable,
@@ -62,6 +62,9 @@ export async function getManyProductVariant<
   }
 
   return productVariantsRaw.map((productVariant) =>
-    mapToProductVariantDTO(productVariant, withProduct)
+    mapToProductVariantDTO({
+      data: productVariant,
+      options: { withProduct, withVariants },
+    })
   );
 }

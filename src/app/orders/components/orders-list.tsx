@@ -36,9 +36,7 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
             <AccordionItem key={order.id} value={order.id}>
               <AccordionTrigger className="py-0 items-center">
                 <div className="flex">
-                  <OrderStatus
-                    orderStatus={order.status}
-                  />
+                  <OrderStatus orderStatus={order.status} />
                   <h3 className="font-semibold">
                     Pedido{" "}
                     <span className="text-muted-foreground">
@@ -54,25 +52,37 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
                   <Card>
                     <CardContent>
                       <p className="text-sm font-normal">
-                        {formatAddress({ address: order.shippingAddress })}
+                        {formatAddress({
+                          address: order.shippingAddress
+                            ? order.shippingAddress
+                            : null,
+                        })}
                       </p>
                     </CardContent>
                   </Card>
                 </div>
                 <Separator />
-                {order.items.map((item) => (
-                  <OrderItem
-                    key={item.id}
-                    orderItemName={item.productVariant.product.name}
-                    orderItemDescription={
-                      item.productVariant.product.description
+                {order.items &&
+                  order.items.map((item) => {
+                    if (!item.productVariant || !item.productVariant.product) {
+                      throw new Error(
+                        "productVariant and productVariant.product is required to render OrderItem"
+                      );
                     }
-                    orderItemImageUrl={item.productVariant.imageUrl}
-                    orderItemVariantColor={item.productVariant.color}
-                    orderItemQuantity={item.quantity}
-                    orderItemPriceInCents={item.priceInCents}
-                  />
-                ))}
+                    return (
+                      <OrderItem
+                        key={item.id}
+                        orderItemName={item.productVariant.product.name}
+                        orderItemDescription={
+                          item.productVariant.product.description
+                        }
+                        orderItemImageUrl={item.productVariant.imageUrl}
+                        orderItemVariantColor={item.productVariant.color}
+                        orderItemQuantity={item.quantity}
+                        orderItemPriceInCents={item.priceInCents}
+                      />
+                    );
+                  })}
                 <Separator />
                 <OrderSummary
                   orderId={order.id}
@@ -80,7 +90,7 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
                   subtotalPriceInCents={order.subtotalPriceInCents}
                   shippingCostInCents={order.shippingCostInCents}
                   totalPriceInCents={order.totalPriceInCents}
-                  checkoutSessionUrl={order.checkoutSessionUrl }
+                  checkoutSessionUrl={order.checkoutSessionUrl}
                 />
               </AccordionContent>
             </AccordionItem>

@@ -49,6 +49,7 @@ const ConfirmationPage = async () => {
         </CardContent>
       </Card>
       <CartSummary
+        typeDataBase="to-cart"
         subtotalInCents={cartTotalInCents}
         products={cart.items.map((item) => ({
           id: item.productVariant!.id,

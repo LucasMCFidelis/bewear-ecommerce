@@ -5,6 +5,7 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgTransaction } from "drizzle-orm/pg-core";
 
 import { getCartData } from "@/app/data/cart/get-cart-data";
+import { getOneDirectBuy } from "@/app/data/direct-buy/get-one-direct-buy";
 import { getOneProductVariant } from "@/app/data/product-variant/get-one-product-variant";
 import { getOneShippingAddress } from "@/app/data/shippingAddress/get-one-shipping-address";
 import { ShippingAddressDTO } from "@/app/data/shippingAddress/shipping-address-dto";
@@ -164,11 +165,10 @@ export const finishOrderToDirect = async ({
 }) => {
   const user = await verifyUser();
 
-  const directBuy = await db.query.directBuyPretensionTable.findFirst({
-    where: eq(Schema.directBuyPretensionTable.id, directBuyId),
-    with: {
-      productVariant: { with: { product: true } },
-    },
+  const directBuy = await getOneDirectBuy({
+    withProduct: true,
+    withVariant: true,
+    where: [{ field: "ID", value: directBuyId }],
   });
 
   if (
