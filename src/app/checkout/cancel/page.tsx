@@ -11,8 +11,8 @@ const CheckoutCancelPage = () => {
     <CheckoutDialog
       imageUrl={"/illustration-order-fail.svg"}
       imageAlt={"Fail"}
-      dialogTitle={"Pedido falhou!"}
-      dialogDescription={`Seu pedido não pode ser efetuado. ${errorInFinishOrder ? `${errorInFinishOrder.message}.` : ""}`}
+      dialogTitle={"Checkout falhou!"}
+      dialogDescription={`O checkout do seu pedido não foi finalizado. ${errorInFinishOrder ? `${errorInFinishOrder.message}.` : ""}`}
     />
   );
 };

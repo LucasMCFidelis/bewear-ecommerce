@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -29,14 +29,12 @@ const CheckoutDialog = ({
 }: CheckoutDialogProps) => {
   return (
     <Dialog open={true} onOpenChange={() => {}}>
-      <DialogContent className="text-center ">
+      <DialogContent showCloseButton={false} className="text-center">
         <div className="relative w-full h-auto aspect-square">
           <Image src={imageUrl} alt={imageAlt} fill />
         </div>
 
-        <DialogTitle className="mt-4 text-2xl">
-          {dialogTitle}
-        </DialogTitle>
+        <DialogTitle className="mt-4 text-2xl">{dialogTitle}</DialogTitle>
         {dialogDescription && (
           <DialogDescription className="font-medium max-h-44 overflow-y-hidden">
             {dialogDescription}
