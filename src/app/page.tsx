@@ -27,14 +27,29 @@ export default async function Home() {
 
   return (
     <div className="px-5 space-y-6">
-      <Image
-        src={"/banner-01.png"}
-        alt="Leve uma vida com estilo"
-        height={0}
-        width={0}
-        sizes="100vw"
-        className="h-auto w-full"
-      />
+      <div className="flex w-full h-auto aspect-[6/8] sm:aspect-[9/4] relative bg-gradient-to-b from-primary to-[#D4D7E4] rounded-3xl">
+        <Image
+          src="/banner-01.png"
+          alt="Leve uma vida com estilo"
+          fill
+          className="z-10 px-3 object-contain"
+        />
+        <div className="flex flex-col gap-4 text-white uppercase mx-auto mt-[15%] sm:mt-[10%]">
+          <span className="font-medium text-xs">Leve uma</span>
+          <div className="flex flex-col md:flex-row gap-x-4 font-anton text-7xl lg:text-[10rem] leading-none overflow-hidden">
+            <span className="z-0">Vida com </span>
+            <span className="z-20 md:z-0">Estilo</span>
+          </div>
+          <div className="hidden md:flex flex-1 flex-col">
+            <span className="font-medium text-xs uppercase max-w-32">
+              VISTA-SE COM ATITUDE.
+            </span>
+            <span className="font-medium text-xs uppercase max-w-32 self-end">
+              CONFORTO & PERSONALIDADE.
+            </span>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-6">
         <h3 className="font-semibold">Marcas Parceiras</h3>
