@@ -35,11 +35,13 @@ export default async function Home() {
             fill
             className="z-10 px-3 object-contain"
           />
-          <div className="flex flex-col gap-4 text-white uppercase mx-auto mt-[15%] sm:mt-[10%] max-w-[90%]">
-            <span className="font-medium text-xs">Leve uma</span>
-            <div className="flex flex-col md:flex-row gap-x-7 font-anton text-7xl lg:text-[10rem] leading-none overflow-hidden break-words">
-              <span className="z-0">Vida com </span>
-              <span className="z-20 md:z-0">Estilo</span>
+          <div className="flex flex-col gap-4 text-white uppercase mx-auto mt-[15%] sm:mt-[10%] w-11/12">
+            <div className="mx-auto">
+              <span className="font-medium text-xs">Leve uma</span>
+              <div className="flex flex-col md:flex-row gap-x-7 font-anton text-7xl md:text-8xl lg:text-9xl leading-none overflow-hidden break-words">
+                <span className="z-0">Vida com </span>
+                <span className="z-20 md:z-0">Estilo</span>
+              </div>
             </div>
             <div className="hidden md:flex flex-1 flex-col">
               <span className="font-medium text-xs uppercase max-w-32">
@@ -84,14 +86,20 @@ export default async function Home() {
 
         <CategorySelector categories={categories} />
 
-        <Image
-          src={"/banner-02.png"}
-          alt="Leve uma vida com estilo"
-          height={0}
-          width={0}
-          sizes="100vw"
-          className="h-auto w-full grid-area-banner2"
-        />
+        <div className="flex w-full aspect-[6/8] sm:aspect-[9/4] relative bg-gradient-to-b from-[#5994ED] to-[#D4D7E4] rounded-3xl grid-area-banner2 overflow-hidden">
+          <Image
+            src="/banner-02t.png"
+            alt="Seja Autentico"
+            fill
+            className="z-10 object-contain transform scale-110 sm:scale-100 translate-2.5 "
+          />
+          <div className="text-white uppercase mx-auto mt-[15%] sm:mt-[10%]">
+            <span className="font-medium text-xs">Seja</span>
+            <span className="flex flex-col md:flex-row gap-x-7 font-anton text-7xl md:text-8xl lg:text-9xl leading-none break-words z-0">
+              Autêntico
+            </span>
+          </div>
+        </div>
 
         <ProductsList
           products={newlyCreatedProducts}
