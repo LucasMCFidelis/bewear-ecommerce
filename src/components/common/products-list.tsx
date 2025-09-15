@@ -1,6 +1,7 @@
 "useClient";
 
 import { productTable, productVariantTable } from "@/db/schema";
+import { cn } from "@/lib/utils";
 
 import ProductItem from "./product-item";
 
@@ -9,11 +10,12 @@ type ProductsListProps = {
   products: (typeof productTable.$inferSelect & {
     variants: (typeof productVariantTable.$inferSelect)[];
   })[];
+  className?: string;
 };
 
-const ProductsList = ({ title, products }: ProductsListProps) => {
+const ProductsList = ({ title, products, className }: ProductsListProps) => {
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", className)}>
       <h3 className="font-semibold">{title}</h3>
       <div className="flex w-full gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
         {products.map((product) => (
