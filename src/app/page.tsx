@@ -90,7 +90,7 @@ export default async function Home() {
 
         <div className="flex w-full aspect-[6/8] sm:aspect-[9/4] relative bg-gradient-to-b from-[#5994ED] to-[#D4D7E4] rounded-3xl grid-area-banner2 overflow-hidden">
           <Image
-            src="/banner-02t.png"
+            src="/banner-02.png"
             alt="Seja Autentico"
             fill
             className="z-10 object-contain transform scale-110 sm:scale-100 translate-2.5 "

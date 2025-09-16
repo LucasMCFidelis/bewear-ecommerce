@@ -6,7 +6,7 @@ import {
   LogOutIcon,
   MenuIcon,
   ShoppingBagIcon,
-  Truck
+  Truck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +27,7 @@ import {
 } from "../ui/sheet";
 import Cart from "./cart";
 import MenuLink from "./menu-link";
+import { ToggleTheme } from "./toggle-theme";
 
 interface HeaderProps {
   categories?: Array<CategoryDTO>;
@@ -59,6 +60,8 @@ const Header = ({ categories }: HeaderProps) => {
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
             <div className="h-full px-5 flex flex-col gap-8">
+              <ToggleTheme />
+              <Separator />
               {session?.user ? (
                 <>
                   <div className="flex justify-between">
