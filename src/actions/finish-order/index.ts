@@ -119,18 +119,20 @@ async function finishOrderTransition<
 export const finishOrderToCart = async () => {
   const user = await verifyUser();
 
-  const cart = await getCartData({
-    userId: user.id,
-    withShippingAddress: true,
-    withItems: true,
-    withProductVariant: true,
-  });
+  const [cart, shippingCost] = await Promise.all([
+    getCartData({
+      userId: user.id,
+      withShippingAddress: true,
+      withItems: true,
+      withProductVariant: true,
+    }),
+    calculateShippingCost({ typeDataBase: "to-cart" }),
+  ]);
 
   if (!cart || !cart.items || cart.items?.length === 0) {
     throw new Error("Cart not found or empty");
   }
   const shippingAddress = cart.shippingAddress!;
-  const shippingCost = await calculateShippingCost({ typeDataBase: "to-cart" });
   const subtotalPriceInCents = cart.cartTotalInCents || 0;
   const totalPriceInCents =
     subtotalPriceInCents + shippingCost.data.freightInCents;
@@ -180,14 +182,16 @@ export const finishOrderToDirect = async ({
     );
   }
 
-  const shippingAddress = await getOneShippingAddress({
-    userId: user.id,
-    shippingAddressId,
-  });
-  const shippingCost = await calculateShippingCost({
-    typeDataBase: "to-direct",
-    directBuyId: directBuy.id,
-  });
+  const [shippingAddress, shippingCost] = await Promise.all([
+    getOneShippingAddress({
+      userId: user.id,
+      shippingAddressId,
+    }),
+    calculateShippingCost({
+      typeDataBase: "to-direct",
+      directBuyId: directBuy.id,
+    }),
+  ]);
   const totalPriceInCents =
     directBuy.priceInCents + shippingCost.data.freightInCents;
 

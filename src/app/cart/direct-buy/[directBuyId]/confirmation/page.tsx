@@ -1,4 +1,3 @@
-
 import CartSummary from "@/app/cart/components/cart-summary";
 import { getCartData } from "@/app/data/cart/get-cart-data";
 import { getOneDirectBuy } from "@/app/data/direct-buy/get-one-direct-buy";
@@ -16,7 +15,15 @@ const ConfirmationDirectBuyPage = async ({
   params,
 }: ConfirmationDirectBuyPageProps) => {
   const user = await verifyUser();
-  const { directBuyId } = await params;
+  const [cart, { directBuyId }] = await Promise.all([
+    getCartData({
+      userId: user.id,
+      withShippingAddress: true,
+    }),
+    params,
+  ]);
+  
+  if (!cart || !cart.shippingAddress) throw new Error("Cart is not found");
 
   const directBuy = await getOneDirectBuy({
     withVariant: true,
@@ -24,12 +31,6 @@ const ConfirmationDirectBuyPage = async ({
     where: [{ field: "ID", value: directBuyId }],
   });
 
-  const cart = await getCartData({
-    userId: user.id,
-    withShippingAddress: true,
-  });
-
-  if (!cart || !cart.shippingAddress) throw new Error("Cart is not found");
   if (!directBuy) throw new Error("Direct Buy Pretension is not found");
 
   const buySubtotalInCents = directBuy?.priceInCents * directBuy?.quantity;

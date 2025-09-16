@@ -6,25 +6,28 @@ import { getOneDirectBuy } from "@/app/data/direct-buy/get-one-direct-buy";
 
 import { getCart } from "../get-cart";
 
-export type CalculateShippingCostProps<TypeDataBase extends "to-cart" | "to-direct"> =
-  {
-    typeDataBase: TypeDataBase;
-  } & (TypeDataBase extends "to-direct"
-    ? { directBuyId: string }
-    : { directBuyId?: string });
+export type CalculateShippingCostProps<
+  TypeDataBase extends "to-cart" | "to-direct",
+> = {
+  typeDataBase: TypeDataBase;
+} & (TypeDataBase extends "to-direct"
+  ? { directBuyId: string }
+  : { directBuyId?: string });
 
 export async function calculateShippingCost<
   TypeDataBase extends "to-cart" | "to-direct",
 >({ typeDataBase, directBuyId }: CalculateShippingCostProps<TypeDataBase>) {
-  const cart = await getCart();
-  let directBuy;
-  if (typeDataBase === "to-direct" && directBuyId) {
-    directBuy = await getOneDirectBuy({
-      withVariant: true,
-      withProduct: true,
-      where: [{ field: "ID", value: directBuyId }],
-    });
-  }
+  const [cart, directBuy] = await Promise.all([
+    getCart(),
+    typeDataBase === "to-direct" && directBuyId
+      ? getOneDirectBuy({
+          withVariant: true,
+          withProduct: true,
+          where: [{ field: "ID", value: directBuyId }],
+        })
+      : null,
+  ]);
+
   if (typeDataBase === "to-direct" && directBuyId && !directBuy) {
     throw new Error("directBuy not found");
   }
@@ -41,7 +44,7 @@ export async function calculateShippingCost<
               length: directBuy.productVariant.product.lengthInCentimeters,
               weight: directBuy.productVariant.product.weightInGrams / 1000,
               insurance_value: directBuy.productVariant.priceInCents / 100,
-              quantity: directBuy.quantity , 
+              quantity: directBuy.quantity,
             },
           ],
         }

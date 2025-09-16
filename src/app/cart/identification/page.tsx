@@ -44,6 +44,7 @@ const IdentificationPage = async () => {
       <div className="px-5 space-y-4">
         <Addresses shippingAddresses={shippingAddresses} />
         <CartSummary
+          typeDataBase="to-cart"
           subtotalInCents={cartTotalInCents}
           products={cart.items.map((item) => {
             if (!item.productVariant || !item.productVariant.product)
@@ -66,7 +67,7 @@ const IdentificationPage = async () => {
             };
           })}
         >
-          <ButtonGoToPayment path="/cart/confirmation" />
+          <ButtonGoToPayment typeDataBase="to-cart" path="/cart/confirmation" />
         </CartSummary>
       </div>
     </ShippingAddressProvider>

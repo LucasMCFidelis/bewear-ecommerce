@@ -10,16 +10,18 @@ import { getAllCategories } from "./data/categories/get-all-categories";
 import { getProducts } from "./data/products/get-products";
 
 export default async function Home() {
-  const products = await getProducts({ withProductVariants: true });
-  const newlyCreatedProducts = await getProducts({
-    withProductVariants: true,
-    orderBy: [{ type: "desc", field: "CREATED_AT" }],
-  });
-  const categories = await getAllCategories({
-    withProducts: true,
-    withVariants: true,
-    orderBy: [{ type: "asc", field: "NAME" }],
-  });
+  const [products, newlyCreatedProducts, categories] = await Promise.all([
+    getProducts({ withProductVariants: true }),
+    getProducts({
+      withProductVariants: true,
+      orderBy: [{ type: "desc", field: "CREATED_AT" }],
+    }),
+    getAllCategories({
+      withProducts: true,
+      withVariants: true,
+      orderBy: [{ type: "asc", field: "NAME" }],
+    }),
+  ]);
 
   const partnerBrandsLogos = getPngFiles({
     folderPath: "partner-brands-logos",

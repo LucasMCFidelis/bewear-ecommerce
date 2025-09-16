@@ -1,4 +1,3 @@
-
 import { getOneDirectBuy } from "@/app/data/direct-buy/get-one-direct-buy";
 import { getManyShippingAddresses } from "@/app/data/shippingAddress/get-many-shipping-addresses";
 import { verifyUser } from "@/app/data/user/verify-user";
@@ -15,11 +14,12 @@ interface DirectBuyPageProps {
 const DirectBuyPage = async ({ params }: DirectBuyPageProps) => {
   const user = await verifyUser();
 
-  const shippingAddresses = await getManyShippingAddresses({
-    userId: user.id,
-  });
-
-  const { directBuyId } = await params;
+  const [shippingAddresses, { directBuyId }] = await Promise.all([
+    getManyShippingAddresses({
+      userId: user.id,
+    }),
+    params,
+  ]);
 
   const directBuy = await getOneDirectBuy({
     withVariant: true,
@@ -56,7 +56,11 @@ const DirectBuyPage = async ({ params }: DirectBuyPageProps) => {
             },
           ]}
         >
-          <ButtonGoToPayment path={`/cart/direct-buy/${directBuyId}/confirmation`} typeDataBase="to-direct" directBuyId={directBuy.id} />
+          <ButtonGoToPayment
+            path={`/cart/direct-buy/${directBuyId}/confirmation`}
+            typeDataBase="to-direct"
+            directBuyId={directBuy.id}
+          />
         </CartSummary>
       </div>
     </ShippingAddressProvider>

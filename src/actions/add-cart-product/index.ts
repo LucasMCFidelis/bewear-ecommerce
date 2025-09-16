@@ -15,16 +15,18 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
   addProductToCartSchema.parse(data);
   const user = await verifyUser();
 
-  const productVariant = await getOneProductVariant({
-    where: [{ field: "ID", value: data.productVariantId }],
-  });
+  const [productVariant, cart] = await Promise.all([
+    getOneProductVariant({
+      where: [{ field: "ID", value: data.productVariantId }],
+    }),
+    getCartData({
+      userId: user.id,
+    }),
+  ]);
+
   if (!productVariant) {
     throw new Error("Product variant not found");
   }
-
-  const cart = await getCartData({
-    userId: user.id,
-  });
   if (!cart) throw new Error("Cart is not found");
 
   let cartId = cart.id;
