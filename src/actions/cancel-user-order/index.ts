@@ -65,13 +65,15 @@ export const cancelOrderTransition = async ({
         checkoutSessionUrl: null,
       })
       .where(eq(orderTable.id, order.id)),
+
     stripe.checkout.sessions.expire(order.checkoutSessionId),
-    order.items.forEach(async (item) => {
+
+    ...order.items.map(async (item) => {
       const productVariant = await getOneProductVariant({
         where: [{ field: "ID", value: item.productVariantId }],
       });
       if (!productVariant) {
-        throw new Error("Product variant not found ");
+        throw new Error("Product variant not found");
       }
 
       await tx
