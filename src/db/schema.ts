@@ -17,6 +17,7 @@ export const userTable = pgTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
+  preferenceDarkMode: boolean("preference_dark_mode").default(false),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -47,6 +48,13 @@ export const sessionTable = pgTable("session", {
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
 });
+
+export const sessionRelations = relations(sessionTable, ({one})=> ({
+  user: one(userTable, {
+    fields: [sessionTable.userId],
+    references: [userTable.id],
+  })
+}))
 
 export const accountTable = pgTable("account", {
   id: text("id").primaryKey(),

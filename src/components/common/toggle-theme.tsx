@@ -13,32 +13,28 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
+import { useToggleDarkModePreference } from "@/hooks/mutations/use-toggle-dark-mode-preference";
 import { useGlobalStates } from "@/hooks/states/use-global-states";
+import { authClient } from "@/lib/auth-client";
 
 const FormSchema = z.object({
   darkMode: z.boolean(),
 });
 
-interface ToggleThemeProps {
-  initialState?: boolean;
-}
-
-export function ToggleTheme({ initialState = false }: ToggleThemeProps) {
+export function ToggleTheme() {
+  const { data: session } = authClient.useSession();
+  const toggleDarkModePreferenceMutation = useToggleDarkModePreference();
   const [{ isDarkModeEnabled }, setGlobalState] = useGlobalStates();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      darkMode: isDarkModeEnabled ? isDarkModeEnabled : initialState,
+      darkMode: isDarkModeEnabled,
     },
   });
 
   useEffect(() => {
-    if (isDarkModeEnabled) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkModeEnabled]);
+    form.reset({ darkMode: isDarkModeEnabled });
+  }, [isDarkModeEnabled, form]);
 
   return (
     <Form {...form}>
@@ -52,9 +48,20 @@ export function ToggleTheme({ initialState = false }: ToggleThemeProps) {
               <FormControl>
                 <Switch
                   checked={field.value}
-                  onCheckedChange={(checked) => {
+                  disabled={toggleDarkModePreferenceMutation.isPending}
+                  onCheckedChange={async (checked) => {
                     field.onChange(checked);
                     setGlobalState({ isDarkModeEnabled: checked });
+
+                    try {
+                      if (session?.user) {
+                        toggleDarkModePreferenceMutation.mutate();
+                      }
+                    } catch (error) {
+                      console.error("Erro ao salvar preferência:", error);
+                      setGlobalState({ isDarkModeEnabled: !checked });
+                      form.setValue("darkMode", !checked);
+                    }
                   }}
                 />
               </FormControl>

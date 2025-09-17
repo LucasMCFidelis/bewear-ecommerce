@@ -20,5 +20,6 @@ export const verifyUser = cache(async (): Promise<UserDTO> => {
     name: session.user.name,
     email: session.user.email,
     image: session.user.image,
+    preferenceDarkMode: !!session.user.preferenceDarkMode
   };
 });

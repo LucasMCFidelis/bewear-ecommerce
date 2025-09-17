@@ -1,7 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { customSession } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
+import { userTable } from "@/db/schema";
 
 export const auth = betterAuth({
   emailAndPassword: {
@@ -16,8 +19,29 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
+  plugins: [
+    customSession(async ({ user, session }) => {
+      const userCustom = await db.query.userTable.findFirst({
+        where: eq(userTable.id, user.id),
+      });
+      return {
+        user: {
+          ...user,
+          preferenceDarkMode: userCustom
+            ? userCustom.preferenceDarkMode
+            : false,
+        },
+        session,
+      };
+    }),
+  ],
   user: {
     modelName: "userTable",
+    additionalFields: {
+      preferenceDarkMode: {
+        type: "boolean",
+      },
+    },
   },
   session: {
     modelName: "sessionTable",

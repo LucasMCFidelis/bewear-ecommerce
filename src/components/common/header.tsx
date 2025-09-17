@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import { CategoryDTO } from "@/app/data/categories/category-dto";
 import { useGlobalStates } from "@/hooks/states/use-global-states";
@@ -35,7 +36,21 @@ interface HeaderProps {
 
 const Header = ({ categories }: HeaderProps) => {
   const { data: session } = authClient.useSession();
-  const [{ isSheetMenuOpen }, setGlobalState] = useGlobalStates();
+
+  const [{ isSheetMenuOpen, isDarkModeEnabled }, setGlobalState] =
+    useGlobalStates();
+
+  useEffect(() => {
+    setGlobalState({ isDarkModeEnabled: !!session?.user.preferenceDarkMode });
+  }, [session?.user.preferenceDarkMode]);
+
+  useEffect(() => {
+    if (isDarkModeEnabled) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkModeEnabled]);
 
   return (
     <header className="flex items-center p-5 justify-between">

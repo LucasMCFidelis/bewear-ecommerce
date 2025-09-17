@@ -3,4 +3,5 @@ export interface UserDTO {
   name: string;
   email: string;
   image?: string | null;
+  preferenceDarkMode: boolean;
 }
