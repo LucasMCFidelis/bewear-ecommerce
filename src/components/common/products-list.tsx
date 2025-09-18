@@ -17,7 +17,11 @@ const ProductsList = ({ title, products, className }: ProductsListProps) => {
   return (
     <div className={cn("space-y-6", className)}>
       <h3 className="font-semibold">{title}</h3>
-      <div className="flex w-full gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+      <div
+        className={
+          "grid w-full gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden grid-flow-col auto-cols-[min(70%)] sm:auto-cols-[min(40%)] md:auto-cols-[min(30%)] lg:auto-cols-[min(24%)]"
+        }
+      >
         {products.map((product) => (
           <ProductItem key={product.id} product={product} />
         ))}
