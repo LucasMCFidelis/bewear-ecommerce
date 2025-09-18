@@ -62,7 +62,7 @@ export default async function Home() {
             {partnerBrandsLogos.map(({ path: logoPath, name }) => (
               <Card
                 key={name}
-                className="h-28 min-w-[5rem] flex-shrink-0 w-fit flex flex-col items-center justify-center mr-8 border-0 shadow-none"
+                className="h-28 min-w-[5rem] flex-shrink-0 w-fit flex flex-col items-center justify-center mr-8 border-0 shadow-none bg-transparent"
               >
                 <CardContent>
                   <Image
@@ -70,6 +70,7 @@ export default async function Home() {
                     height={32}
                     src={logoPath}
                     alt={`${name} Logo`}
+                    className="dark:invert"
                   />
                 </CardContent>
                 <CardFooter>
