@@ -18,7 +18,7 @@ const VariantSelector = ({
         <div className="flex items-center gap-4">
           {variants.map((variant) => (
             <Link
-              href={`/product-variant/${variant.slug}`}
+              href={`/products?variantSlug=${variant.slug}`}
               key={variant.id}
               className={
                 selectedVariantSlug === variant.slug

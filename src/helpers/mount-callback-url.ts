@@ -1,5 +1,5 @@
 interface MountCallbackUrlProps {
-  baseUrl: string;
+  baseUrl?: string;
   states: Array<{
     name: string;
     value?: string | number | boolean;
@@ -7,7 +7,7 @@ interface MountCallbackUrlProps {
 }
 
 export const mountCallbackUrl = ({
-  baseUrl,
+  baseUrl = "/",
   states,
 }: MountCallbackUrlProps) => {
   let resultCallbackUrl = baseUrl;

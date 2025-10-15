@@ -2,7 +2,7 @@
 
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { parseAsInteger, useQueryStates } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
 import { ProductVariantDTO } from "@/app/data/product-variant/product-variant-dto";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,8 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
   const { data: session } = authClient.useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const [{ quantity }, setProductStates] = useQueryStates({
+  const [{ variantSlug, quantity }, setProductStates] = useQueryStates({
+    variantSlug: parseAsString,
     quantity: parseAsInteger.withDefault(1),
   });
 
@@ -39,7 +40,7 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
   const handleDirectBuy = async () => {
     if (!session?.user.id) {
       router.push(
-        `/authenticator?callbackUrl=${encodeURIComponent(pathname)}&quantity=${quantity}`
+        `/authenticator?callbackUrl=${encodeURIComponent(pathname)}&variantSlug=${variantSlug}&quantity=${quantity}`
       );
       return;
     }

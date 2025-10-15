@@ -1,6 +1,6 @@
 "use client";
 
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { useSearchParams } from "next/navigation";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mountCallbackUrl } from "@/helpers/mount-callback-url";
@@ -9,14 +9,16 @@ import SignInForm from "./components/sign-in-form";
 import SignUpForm from "./components/sign-up-form";
 
 const Authenticator = () => {
-  const [{ callbackUrl, quantity }] = useQueryStates({
-    callbackUrl: parseAsString,
-    quantity: parseAsInteger.withDefault(1),
-  });
+  const searchParams = useSearchParams();
+
   const callbackURLWithStates = mountCallbackUrl({
-    baseUrl: callbackUrl || "",
-    states: [{ name: "quantity", value: quantity }],
-  });
+    baseUrl: searchParams.get("callbackUrl") || "",
+    states: [
+      ...(searchParams.entries().map((item)=>{
+        return { name: item[0], value: item[1]}
+      })), 
+    ],
+  }); 
 
   return (
     <>

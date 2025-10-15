@@ -10,15 +10,15 @@ import ProductActions from "./components/product-actions";
 import VariantSelector from "./components/variant-selector";
 
 interface ProductPageProps {
-  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ variantSlug: string }>;
 }
 
-const ProductPage = async ({ params }: ProductPageProps) => {
-  const { slug } = await params;
+const ProductPage = async ({ searchParams }: ProductPageProps) => {
+  const { variantSlug } = await searchParams;
   const productVariant = await getOneProductVariant({
     withProduct: true,
     withVariants: true,
-    where: [{ field: "SLUG", value: slug }],
+    where: [{ field: "SLUG", value: variantSlug }],
   });
 
   if (!productVariant) {
