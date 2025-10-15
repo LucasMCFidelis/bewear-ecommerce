@@ -47,7 +47,11 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-const SignUpForm = () => {
+interface SignUpFormProps {
+  callbackUrl: string;
+}
+
+const SignUpForm = ({ callbackUrl }: SignUpFormProps) => {
   const router = useRouter();
 
   const form = useForm<FormValues>({
@@ -67,7 +71,7 @@ const SignUpForm = () => {
       password: values.password,
       fetchOptions: {
         onSuccess() {
-          router.push("/");
+          router.push(callbackUrl);
         },
         onError: (ctx) => {
           if (ctx.error.code === "USER_ALREADY_EXISTS") {

@@ -1,8 +1,8 @@
 "use client";
 
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { redirect } from "next/navigation";
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { usePathname, useRouter } from "next/navigation";
+import { parseAsInteger, useQueryStates } from "nuqs";
 
 import { ProductVariantDTO } from "@/app/data/product-variant/product-variant-dto";
 import { Button } from "@/components/ui/button";
@@ -17,17 +17,14 @@ interface ProductActionsProps {
 
 const ProductActions = ({ productVariant }: ProductActionsProps) => {
   const { data: session } = authClient.useSession();
-  if (!session?.user.id) redirect("/");
-
-  const [{ slug, quantity }, setProductStates] = useQueryStates({
-    slug: parseAsString.withDefault(productVariant.slug),
+  const router = useRouter();
+  const pathname = usePathname();
+  const [{ quantity }, setProductStates] = useQueryStates({
     quantity: parseAsInteger.withDefault(1),
   });
 
   const createDirectBuyPretensionMutation = useCreateDirectBuyPretension();
   const quantityMax = productVariant.quantityInStock;
-
-  console.log("slug", slug);
 
   const handleDecrement = () => {
     const newQuantity = quantity > 1 ? quantity - 1 : quantity;
@@ -40,6 +37,12 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
   };
 
   const handleDirectBuy = async () => {
+    if (!session?.user.id) {
+      router.push(
+        `/authenticator?callbackUrl=${encodeURIComponent(pathname)}&quantity=${quantity}`
+      );
+      return;
+    }
     const directBuy = await createDirectBuyPretensionMutation.mutateAsync({
       productVariantId: productVariant.id,
       priceInCents: productVariant.priceInCents,
@@ -47,7 +50,7 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
       quantity,
     });
 
-    redirect(`/cart/direct-buy/${directBuy.id}`)
+    router.push(`/cart/direct-buy/${directBuy.id}`);
   };
 
   return (
@@ -79,7 +82,10 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
         <Button
           className="rounded-full"
           size={"lg"}
-          disabled={createDirectBuyPretensionMutation.isPending}
+          disabled={
+            createDirectBuyPretensionMutation.isPending ||
+            quantity > productVariant.quantityInStock
+          }
           onClick={handleDirectBuy}
         >
           Comprar Agora
