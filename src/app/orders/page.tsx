@@ -20,7 +20,7 @@ const OrdersPage = async () => {
 
   return (
     <div className="px-5 space-y-4">
-      <h2 className="font-semibold text-lg">Meus pedidos</h2>
+      <h2 className="font-semibold md:text-lg">Meus pedidos</h2>
       <OrdersList initialOrders={orders} />
     </div>
   );

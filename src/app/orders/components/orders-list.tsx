@@ -31,9 +31,9 @@ const OrdersList = ({ initialOrders }: OrdersListProps) => {
   return (
     <>
       {orders && orders?.length > 0 ? (
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {orders.map((order, index) => (
-            <AccordionItem key={order.id} value={order.id}>
+            <AccordionItem key={order.id} value={order.id} className="h-fit">
               <AccordionTrigger className="py-0 items-center">
                 <div className="flex">
                   <OrderStatus orderStatus={order.status} />
