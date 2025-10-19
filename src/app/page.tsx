@@ -58,11 +58,11 @@ export default async function Home() {
 
         <div className="space-y-6 grid-area-marquee overflow-hidden">
           <h3 className="font-semibold">Marcas Parceiras</h3>
-          <Marquee className="flex items-center" speed={30} gradient={false}>
+          <Marquee className="flex items-center" speed={20} gradient={false} autoFill>
             {partnerBrandsLogos.map(({ path: logoPath, name }) => (
               <Card
                 key={name}
-                className="h-28 min-w-[5rem] flex-shrink-0 w-fit flex flex-col items-center justify-center mr-8 border-0 shadow-none bg-transparent"
+                className="h-28 min-w-[5rem] flex-shrink-0 w-fit flex flex-col items-center justify-center sm:mr-8 border-0 shadow-none bg-transparent"
               >
                 <CardContent>
                   <Image
