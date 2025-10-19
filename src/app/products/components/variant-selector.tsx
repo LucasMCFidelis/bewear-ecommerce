@@ -23,15 +23,14 @@ const VariantSelector = ({
             <Link
               href={`/products?variantSlug=${variant.slug}`}
               key={variant.id}
-              className={
+              className={`relative size-16 md:size-24 lg:size-28 ${
                 selectedVariantSlug === variant.slug
                   ? "border-primary rounded-xl border-2"
                   : ""
-              }
+              }`}
             >
               <Image
-                width={68}
-                height={68}
+                fill
                 src={variant.imageUrl}
                 alt={variant.name}
                 className="rounded-xl"
