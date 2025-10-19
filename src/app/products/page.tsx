@@ -27,42 +27,50 @@ const ProductPage = async ({ searchParams }: ProductPageProps) => {
 
   const likelyProducts = await getProducts({
     withProductVariants: true,
+    withCategory: true,
     where: [{ field: "CATEGORY_ID", value: productVariant.product.categoryId }],
     orderBy: [{ field: "NAME", type: "asc" }],
   });
 
   return (
     <>
-      <div className="flex flex-col space-y-6 px-5">
+      <div className="flex flex-col gap-6 px-5 sm:grid sm:grid-cols-2">
         <Image
           src={productVariant.imageUrl}
           alt={productVariant.name}
           sizes="100vw"
           height={0}
           width={0}
-          className="h-auto w-full object-cover rounded-3xl"
+          className="h-auto w-full object-cover rounded-3xl md:row-span-full col-start-1"
         />
 
-        <VariantSelector
-          variants={productVariant.product.variants}
-          selectedVariantSlug={productVariant.slug}
-        />
-
-        <div>
-          <h2 className="font-semibold">{productVariant.product.name}</h2>
-          <h3 className="text-muted-foreground text-sm">
-            {productVariant.name}
-          </h3>
-          <h2 className="text-lg font-semibold">
-            {formatCentsToBRL(productVariant.priceInCents)}
-          </h2>
+        <div className="grid h-fit gap-6">
+          <VariantSelector
+            variants={productVariant.product.variants}
+            selectedVariantSlug={productVariant.slug}
+            className="sm:row-start-2"
+          />
+          <div className="sm:row-start-1 h-fit">
+            <h2 className="font-semibold md:text-xl">{productVariant.product.name}</h2>
+            <h3 className="text-muted-foreground text-sm sm:text-base">
+              {productVariant.name}
+            </h3>
+            <h2 className="text-lg md:text-xl font-semibold">
+              {formatCentsToBRL(productVariant.priceInCents)}
+            </h2>
+          </div>
+          <ProductActions
+            productVariant={productVariant}
+            className="sm:row-start-3"
+          />
+          <p className="text-sm md:text-base">{productVariant.product.description}</p>
         </div>
-
-        <ProductActions productVariant={productVariant} />
-
-        <p className="text-sm">{productVariant.product.description}</p>
-
-        <ProductsList title="Talvez você goste" products={likelyProducts} />
+        <ProductsList
+          title="Talvez você goste"
+          products={likelyProducts}
+          redirectToViewMore={`/category/${likelyProducts[0].category?.slug}`}
+          className="sm:col-span-full"
+        />
       </div>
     </>
   );

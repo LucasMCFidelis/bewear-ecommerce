@@ -8,14 +8,16 @@ import { ProductVariantDTO } from "@/app/data/product-variant/product-variant-dt
 import { Button } from "@/components/ui/button";
 import { useCreateDirectBuyPretension } from "@/hooks/mutations/use-create-direct-buy-pretension";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 import AddToCartButton from "./add-to-cart-button";
 
 interface ProductActionsProps {
   productVariant: ProductVariantDTO;
+  className?: string;
 }
 
-const ProductActions = ({ productVariant }: ProductActionsProps) => {
+const ProductActions = ({ productVariant, className }: ProductActionsProps) => {
   const { data: session } = authClient.useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -55,7 +57,7 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
   };
 
   return (
-    <>
+    <div className={cn("space-y-6", className)}>
       <div className="space-y-4">
         <h3 className="font-medium">Quantidade</h3>
         <div className="flex w-[100px] items-center justify-between rounded-lg border">
@@ -92,7 +94,7 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
           Comprar Agora
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

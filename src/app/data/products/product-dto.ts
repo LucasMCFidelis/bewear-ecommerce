@@ -1,6 +1,10 @@
+import { CategoryDTO } from "../categories/category-dto";
 import { ProductVariantDTO } from "../product-variant/product-variant-dto";
 
-export type ProductDTO<WithVariant extends boolean = false>  = {
+export type ProductDTO<
+  WithVariant extends boolean = false,
+  WithCategory extends boolean = false,
+> = {
   id: string;
   categoryId: string;
   name: string;
@@ -11,6 +15,13 @@ export type ProductDTO<WithVariant extends boolean = false>  = {
   lengthInCentimeters: number;
   weightInGrams: number;
   createdAt: Date;
-} & (WithVariant extends true? {
-  variants: Array<ProductVariantDTO>
-} : {variants?: Array<ProductVariantDTO>})
+} & (WithVariant extends true
+  ? {
+      variants: Array<ProductVariantDTO>;
+    }
+  : { variants?: Array<ProductVariantDTO> }) &
+  (WithCategory extends true
+    ? {
+        category: CategoryDTO;
+      }
+    : { category?: CategoryDTO });

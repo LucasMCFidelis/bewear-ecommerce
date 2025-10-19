@@ -10,17 +10,27 @@ import { ProductDTO } from "./product-dto";
 
 type ProductColumns = typeof ProductFields;
 
-interface GetProductsProps<WithVariant extends boolean> {
+interface GetProductsProps<
+  WithVariant extends boolean,
+  WithCategory extends boolean,
+> {
   withProductVariants: WithVariant;
+  withCategory?: WithCategory;
   orderBy?: Array<OrderByCondition<ProductColumns>>;
   where?: Array<WhereCondition<ProductColumns>>;
 }
 
-export async function getProducts<WithVariant extends boolean>({
+export async function getProducts<
+  WithVariant extends boolean,
+  WithCategory extends boolean,
+>({
   withProductVariants,
+  withCategory,
   orderBy,
   where,
-}: GetProductsProps<WithVariant>): Promise<Array<ProductDTO<WithVariant>>> {
+}: GetProductsProps<WithVariant, WithCategory>): Promise<
+  Array<ProductDTO<WithVariant, WithCategory>>
+> {
   const whereClause = where
     ? mountWhereClause({
         table: productTable,
@@ -41,6 +51,7 @@ export async function getProducts<WithVariant extends boolean>({
     ...(orderByClause && { orderBy: orderByClause }),
     with: {
       ...(withProductVariants && { variants: true }),
+      ...(withCategory && { category: true }),
     },
   });
 

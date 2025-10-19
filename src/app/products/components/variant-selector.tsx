@@ -2,20 +2,23 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { ProductVariantDTO } from "@/app/data/product-variant/product-variant-dto";
+import { cn } from "@/lib/utils";
 
 interface VariantSelectorProps {
   selectedVariantSlug: string;
   variants?: Array<ProductVariantDTO>;
+  className?: string;
 }
 
 const VariantSelector = ({
   selectedVariantSlug,
   variants,
+  className,
 }: VariantSelectorProps) => {
   return (
     <>
       {variants && (
-        <div className="flex items-center gap-4">
+        <div className={cn("flex items-center gap-4", className)}>
           {variants.map((variant) => (
             <Link
               href={`/products?variantSlug=${variant.slug}`}

@@ -1,32 +1,59 @@
-"useClient";
+"use client";
 
-import { productTable, productVariantTable } from "@/db/schema";
+import Link from "next/link";
+
+import { ProductDTO } from "@/app/data/products/product-dto";
 import { cn } from "@/lib/utils";
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 import ProductItem from "./product-item";
 
 type ProductsListProps = {
   title: string;
-  products: (typeof productTable.$inferSelect & {
-    variants: (typeof productVariantTable.$inferSelect)[];
-  })[];
+  products: Array<ProductDTO<true>>;
+  redirectToViewMore?: string;
   className?: string;
 };
 
-const ProductsList = ({ title, products, className }: ProductsListProps) => {
+const ProductsList = ({
+  title,
+  products,
+  className,
+  redirectToViewMore,
+}: ProductsListProps) => {
   return (
-    <div className={cn("space-y-6", className)}>
-      <h3 className="font-semibold">{title}</h3>
-      <div
-        className={
-          "grid w-full gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden grid-flow-col auto-cols-[min(70%)] sm:auto-cols-[min(40%)] md:auto-cols-[min(30%)] lg:auto-cols-[min(24%)]"
-        }
-      >
-        {products.map((product) => (
-          <ProductItem key={product.id} product={product} />
-        ))}
+    <Carousel className={cn("space-y-6", className)}>
+      <div className="flex justify-between">
+        <h3 className="font-semibold">{title}</h3>
+        <div className="flex">
+          {redirectToViewMore && (
+            <Link href={redirectToViewMore} className="md:mr-24">
+              Ver todos
+            </Link>
+          )}
+          <div className="hidden md:flex relative top-0 right-10">
+            <CarouselPrevious />
+            <CarouselNext />
+          </div>
+        </div>
       </div>
-    </div>
+      <CarouselContent>
+        {products.map((product) => (
+          <CarouselItem
+            key={product.id}
+            className="basis-1/2 md:basis-1/3 lg:basis-1/4"
+          >
+            <ProductItem product={product} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 };
 

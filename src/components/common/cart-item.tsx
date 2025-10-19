@@ -4,7 +4,7 @@ import { MinusIcon, PlusIcon, Trash2Icon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
-import { ProductVariantDTO } from "@/app/data/products/product-variant-dto";
+import { ProductVariantDTO } from "@/app/data/product-variant/product-variant-dto";
 import { formatCentsToBRL } from "@/helpers/money";
 import { useDecreaseCartProduct } from "@/hooks/mutations/use-decrease-cart-product";
 import { useIncreaseCartProduct } from "@/hooks/mutations/use-increase-cart-product";
@@ -78,7 +78,9 @@ const CartItem = ({ cartItemId, productVariant, quantity }: CartItemProps) => {
           className="rounded-lg"
         />
         <div className="flex flex-col gap-1">
-          <p className="text-sm font-semibold">{productVariant.product?.name}</p>
+          <p className="text-sm font-semibold">
+            {productVariant.product?.name}
+          </p>
           <p className="text-muted-foreground text-xs font-medium">
             {productVariantName}
           </p>
