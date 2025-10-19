@@ -34,8 +34,8 @@ const ProductItem = ({ product, textContainerClassName }: ProductItemProps) => {
       <div
         className={cn("flex max-w-full flex-col gap-1", textContainerClassName)}
       >
-        <p className="truncate text-sm font-medium">{product.name}</p>
-        <p className="text-muted-foreground truncate text-xs font-medium">
+        <p className="truncate text-sm font-medium md:text-base">{product.name}</p>
+        <p className="text-muted-foreground truncate text-xs md:text-sm font-medium">
           {product.description}
         </p>
         <p className="truncate text-sm font-semibold">
