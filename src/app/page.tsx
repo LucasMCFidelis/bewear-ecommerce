@@ -4,7 +4,7 @@ import Marquee from "react-fast-marquee";
 import CategorySelector from "@/components/common/category-selector";
 import ProductsList from "@/components/common/products-list";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { getPngFiles } from "@/helpers/getPngFiles";
+import { getPngFiles } from "@/helpers/get-png-files";
 
 import { getAllCategories } from "./data/categories/get-all-categories";
 import { getProducts } from "./data/products/get-products";

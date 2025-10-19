@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
-import PasswordInput from "./passwordInput";
+import PasswordInput from "./password-input";
 
 const formSchema = z
   .object({
