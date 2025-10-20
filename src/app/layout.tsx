@@ -8,6 +8,7 @@ import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import { NuqsProvider } from "@/providers/nuqs-provider";
 import ReactQueryProvider from "@/providers/react-query";
+import ThemeProvider from "@/providers/theme-provider";
 
 import { getAllCategories } from "./data/categories/get-all-categories";
 
@@ -49,12 +50,14 @@ export default async function RootLayout({
       >
         <ReactQueryProvider>
           <NuqsProvider>
-            <Header categories={categories} />
-            <div className="flex-1">
-              {children}
-              <Toaster />
-            </div>
-            <Footer />
+            <ThemeProvider>
+              <Header categories={categories} />
+              <div className="flex-1">
+                {children}
+                <Toaster />
+              </div>
+              <Footer />
+            </ThemeProvider>
           </NuqsProvider>
         </ReactQueryProvider>
       </body>

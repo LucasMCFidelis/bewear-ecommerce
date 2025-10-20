@@ -14,6 +14,7 @@ import { useEffect } from "react";
 
 import { CategoryDTO } from "@/app/data/categories/category-dto";
 import { useGlobalStates } from "@/hooks/states/use-global-states";
+import { useThemeContext } from "@/hooks/states/use-theme-context";
 import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -37,20 +38,13 @@ interface HeaderProps {
 const Header = ({ categories }: HeaderProps) => {
   const { data: session } = authClient.useSession();
 
-  const [{ isSheetMenuOpen, isDarkModeEnabled }, setGlobalState] =
-    useGlobalStates();
+  const [{ isSheetMenuOpen }, setGlobalState] = useGlobalStates();
+  const { setIsDarkMode } = useThemeContext();
 
   useEffect(() => {
-    setGlobalState({ isDarkModeEnabled: !!session?.user.preferenceDarkMode });
+    if (!session) return;
+    setIsDarkMode(!!session.user.preferenceDarkMode);
   }, [session?.user.preferenceDarkMode]);
-
-  useEffect(() => {
-    if (isDarkModeEnabled) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkModeEnabled]);
 
   return (
     <header className="flex items-center p-5 justify-between">

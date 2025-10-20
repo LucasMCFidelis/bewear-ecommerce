@@ -6,6 +6,5 @@ export const useGlobalStates = () => {
   return useQueryStates({
     isCartOpen: parseAsBoolean.withDefault(false),
     isSheetMenuOpen: parseAsBoolean.withDefault(false),
-    isDarkModeEnabled: parseAsBoolean.withDefault(false),
   });
 };
