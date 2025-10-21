@@ -53,9 +53,10 @@ const AddressItem = ({
     resolver: zodResolver(createShippingAddressSchema),
     defaultValues: {
       fullName: address.recipientName,
-      cpf: address.cpfOrCnpj,
+      cpf: address.cpfOrCnpj ? address.cpfOrCnpj : "",
       address: address.street,
       ...address,
+      email: address.email ? address.email : "",
       complement: address.complement ?? "",
     },
   });
