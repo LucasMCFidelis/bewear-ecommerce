@@ -96,11 +96,10 @@ export async function calculateShippingCost<
       }
     );
   } catch (error) {
+    console.error("Erro na requisição:", error);
     if (isAxiosError(error)) {
-      console.error("Erro na resposta da API:", error?.response?.data);
       throw new Error(error.response?.data.message || "Erro desconhecido");
     } else {
-      console.error("Erro na requisição:", error);
       throw new Error("Erro na requisição");
     }
   }
