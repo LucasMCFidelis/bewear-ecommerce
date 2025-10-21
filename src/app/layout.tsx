@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { Anton, Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import { Toaster } from "sonner";
 
 import Footer from "@/components/common/footer";
@@ -51,12 +52,14 @@ export default async function RootLayout({
         <ReactQueryProvider>
           <NuqsProvider>
             <ThemeProvider>
-              <Header categories={categories} />
-              <div className="flex-1">
-                {children}
-                <Toaster />
-              </div>
-              <Footer />
+              <Suspense fallback={<p>Carregando...</p>}>
+                <Header categories={categories} />
+                <div className="flex-1">
+                  {children}
+                  <Toaster />
+                </div>
+                <Footer />
+              </Suspense>
             </ThemeProvider>
           </NuqsProvider>
         </ReactQueryProvider>

@@ -48,10 +48,10 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 interface SignUpFormProps {
-  callbackUrl: string;
+  callbackUrl?: string;
 }
 
-const SignUpForm = ({ callbackUrl }: SignUpFormProps) => {
+const SignUpForm = ({ callbackUrl = "/" }: SignUpFormProps) => {
   const router = useRouter();
 
   const form = useForm<FormValues>({
