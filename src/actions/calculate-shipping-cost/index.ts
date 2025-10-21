@@ -78,7 +78,7 @@ export async function calculateShippingCost<
       "https://www.melhorenvio.com.br/api/v2/me/shipment/calculate",
       {
         from: {
-          postal_code: process.env.NEXT_PUBLIC_FROM_POSTAL_CODE,
+          postal_code: process.env.FROM_POSTAL_CODE,
         },
         to: {
           postal_code: data?.shippingAddress?.zipCode.replace("-", ""),
@@ -88,7 +88,7 @@ export async function calculateShippingCost<
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_MELHOR_ENVIO}`,
+          Authorization: `Bearer ${process.env.TOKEN_MELHOR_ENVIO}`,
           Accept: "application/json",
           "Content-Type": "application/json",
           "User-Agent": "bewear lucasm241301@gmail.com",
