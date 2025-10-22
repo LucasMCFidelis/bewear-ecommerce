@@ -17,6 +17,13 @@ export type CalculateShippingCostProps<
 export async function calculateShippingCost<
   TypeDataBase extends "to-cart" | "to-direct",
 >({ typeDataBase, directBuyId }: CalculateShippingCostProps<TypeDataBase>) {
+  if (!process.env.FROM_POSTAL_CODE || !process.env.TOKEN_MELHOR_ENVIO) {
+    throw new Error(
+      "env variables FROM_POSTAL_CODE and TOKEN_MELHOR_ENVIO is required"
+    );
+  }
+  console.log(typeof process.env.FROM_POSTAL_CODE);
+
   const [cart, directBuy] = await Promise.all([
     getCart(),
     typeDataBase === "to-direct" && directBuyId
