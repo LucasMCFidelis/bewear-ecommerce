@@ -79,28 +79,34 @@ export async function calculateShippingCost<
           quantity: item.quantity,
         }));
 
+  const payload = {
+    from: {
+      postal_code: process.env.FROM_POSTAL_CODE,
+    },
+    to: {
+      postal_code: data?.shippingAddress?.zipCode.replace("-", ""),
+    },
+    products,
+    services: "1",
+  };
+  console.log("payload:", payload);
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${process.env.TOKEN_MELHOR_ENVIO}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent": "bewear lucasm241301@gmail.com",
+    },
+  };
+  console.log("config:", config);
+
   let response;
   try {
     response = await axios.post(
       "https://www.melhorenvio.com.br/api/v2/me/shipment/calculate",
-      {
-        from: {
-          postal_code: process.env.FROM_POSTAL_CODE,
-        },
-        to: {
-          postal_code: data?.shippingAddress?.zipCode.replace("-", ""),
-        },
-        products,
-        services: "1",
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.TOKEN_MELHOR_ENVIO}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "User-Agent": "bewear lucasm241301@gmail.com",
-        },
-      }
+      payload,
+      config
     );
   } catch (error) {
     console.error("Erro na requisição:", error);
