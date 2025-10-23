@@ -89,7 +89,6 @@ export async function calculateShippingCost<
     products,
     services: "1",
   };
-  console.log("payload:", payload);
 
   const config = {
     headers: {
@@ -99,7 +98,6 @@ export async function calculateShippingCost<
       "User-Agent": "bewear lucasm241301@gmail.com",
     },
   };
-  console.log("config:", config);
 
   let response;
   try {
