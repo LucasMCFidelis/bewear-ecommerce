@@ -33,8 +33,6 @@ const ConfirmationDirectBuyPage = async ({
 
   if (!directBuy) throw new Error("Direct Buy Pretension is not found");
 
-  const buySubtotalInCents = directBuy?.priceInCents * directBuy?.quantity;
-
   return (
     <div className="space-y-4 px-5">
       <Card>
@@ -56,24 +54,7 @@ const ConfirmationDirectBuyPage = async ({
       <CartSummary
         typeDataBase="to-direct"
         directBuyId={directBuy.id}
-        subtotalInCents={buySubtotalInCents}
-        products={[
-          {
-            id: directBuy.productVariant!.id,
-            name: directBuy.productVariant!.product!.name,
-            variantName: directBuy.productVariant!.name,
-            quantity: directBuy.quantity,
-            widthInCentimeters:
-              directBuy.productVariant!.product!.widthInCentimeters,
-            heightInCentimeters:
-              directBuy.productVariant!.product!.heightInCentimeters,
-            lengthInCentimeters:
-              directBuy.productVariant!.product!.lengthInCentimeters,
-            weightInGrams: directBuy.productVariant!.product!.weightInGrams,
-            priceInCents: directBuy.productVariant!.priceInCents,
-            imageUrl: directBuy.productVariant!.imageUrl,
-          },
-        ]}
+        directBuyData={directBuy}
       >
         <FinishOrderButtonToDirect
           directBuyId={directBuyId}

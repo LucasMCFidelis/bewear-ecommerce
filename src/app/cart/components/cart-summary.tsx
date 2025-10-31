@@ -1,42 +1,33 @@
 "use client";
 
-import Image from "next/image";
-import React from "react";
+import React, { memo } from "react";
 
 import { CalculateShippingCostProps } from "@/actions/calculate-shipping-cost";
+import { DirectBuyDTO } from "@/app/data/direct-buy/direct-buy-dto";
 import LoaderSpin from "@/components/common/loader-spin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatCentsToBRL } from "@/helpers/money";
 import { useResolveCalculateShippingCostToCartOrDirect } from "@/hooks/queries/use-resolve-calculate-shipping-cost";
 
-import { useShippingAddressContext } from "../address-context";
+import { useCartContext } from "../cart-context";
+import CartSummaryItem from "./cart-summary-item";
 
 type CartSummaryProps<TypeDataBase extends "to-cart" | "to-direct"> = {
-  subtotalInCents: number;
-  products: Array<{
-    id: string;
-    name: string;
-    variantName: string;
-    quantity: number;
-    priceInCents: number;
-    widthInCentimeters: number;
-    heightInCentimeters: number;
-    lengthInCentimeters: number;
-    weightInGrams: number;
-    imageUrl: string;
-  }>;
   children?: React.ReactNode;
-} & CalculateShippingCostProps<TypeDataBase>;
+} & CalculateShippingCostProps<TypeDataBase> &
+  (TypeDataBase extends "to-direct"
+    ? { directBuyData: DirectBuyDTO<true, true> }
+    : { directBuyData?: never });
 
 const CartSummary = <TypeDataBase extends "to-cart" | "to-direct">({
-  subtotalInCents,
-  products,
   children,
   typeDataBase,
   directBuyId,
+  directBuyData,
 }: CartSummaryProps<TypeDataBase>) => {
-  const { selectedShippingAddress } = useShippingAddressContext();
+  const { selectedShippingAddress, cartSubTotalInCents, productsInCart } =
+    useCartContext();
 
   const {
     data,
@@ -61,7 +52,7 @@ const CartSummary = <TypeDataBase extends "to-cart" | "to-direct">({
         <div className="flex justify-between">
           <p className="text-sm">Subtotal</p>
           <p className="text-muted-foreground text-sm font-medium">
-            {formatCentsToBRL(subtotalInCents)}
+            {formatCentsToBRL(cartSubTotalInCents)}
           </p>
         </div>
         <div className="flex justify-between">
@@ -92,7 +83,7 @@ const CartSummary = <TypeDataBase extends "to-cart" | "to-direct">({
                 {isErrorInCalculateShippingCost
                   ? "Erro"
                   : formatCentsToBRL(
-                      subtotalInCents +
+                      cartSubTotalInCents +
                         (shippingCostInCents || defaultShippingCostInCents)
                     )}
               </p>
@@ -104,37 +95,30 @@ const CartSummary = <TypeDataBase extends "to-cart" | "to-direct">({
           <Separator />
         </div>
 
-        {products.map((product) => (
-          <div className="flex items-center justify-between" key={product.id}>
-            <div className="flex items-center gap-4">
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                width={78}
-                height={78}
-                className="rounded-lg"
-              />
-              <div className="flex flex-col gap-1">
-                <p className="text-sm font-semibold">{product.name}</p>
-                <p className="text-muted-foreground text-xs font-medium">
-                  {product.variantName}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col items-end justify-center gap-2">
-              <p className="text-muted-foreground text-xs font-medium">
-                {product.quantity} x {formatCentsToBRL(product.priceInCents)}
-              </p>
-              <p className="text-sm font-bold">
-                {formatCentsToBRL(product.priceInCents * product.quantity)}
-              </p>
-            </div>
-          </div>
-        ))}
+        {typeDataBase === "to-direct" ? (
+          <CartSummaryItem
+            imageUrl={directBuyData!.productVariant.imageUrl}
+            productName={directBuyData!.productVariant.product.name}
+            productVariantName={directBuyData!.productVariant.name}
+            productQuantity={directBuyData!.quantity}
+            productPriceInCents={directBuyData!.productVariant.priceInCents}
+          />
+        ) : (
+          productsInCart.map((product) => (
+            <CartSummaryItem
+              key={product.id}
+              imageUrl={product.imageUrl}
+              productName={product.name}
+              productVariantName={product.variantName}
+              productQuantity={product.quantity}
+              productPriceInCents={product.priceInCents}
+            />
+          ))
+        )}
         {children}
       </CardContent>
     </Card>
   );
 };
 
-export default CartSummary;
+export default memo(CartSummary);

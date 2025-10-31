@@ -8,7 +8,6 @@ import {
   CreateShippingAddressSchema,
   createShippingAddressSchema,
 } from "@/actions/create-shipping-address/schema";
-import { getManyShippingAddresses } from "@/app/data/shippingAddress/get-many-shipping-addresses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -16,17 +15,13 @@ import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-address";
 
-import { useShippingAddressContext } from "../address-context";
+import { useCartContext } from "../cart-context";
 import AddressForm from "./address-form";
 import AddressItem from "./address-item";
 
-interface AddressesProps {
-  shippingAddresses: Awaited<ReturnType<typeof getManyShippingAddresses>>;
-}
-
-const Addresses = ({ shippingAddresses }: AddressesProps) => {
-  const { selectedShippingAddress, setSelectedShippingAddress } =
-    useShippingAddressContext();
+const Addresses = () => {
+  const { shippingAddresses, selectedShippingAddress, setSelectedShippingAddress } =
+    useCartContext();
   const createShippingAddressMutation = useCreateShippingAddress();
   const { data: addresses, isPending: isAddressesPending } = useUserAddresses({
     initialData: shippingAddresses,

@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
-import {
-  calculateShippingCost
-} from "@/actions/calculate-shipping-cost";
+import { calculateShippingCost } from "@/actions/calculate-shipping-cost";
 
 export const getCalculateShippingCostQueryKey = (
-  shippingAddressId: string | null, directBuyId: string| null
+  shippingAddressId: string | null,
+  directBuyId: string | null
 ) => ["calculate-shipping-cost", shippingAddressId, directBuyId] as const;
 
 export function useCalculateShippingCostToCart({
@@ -15,8 +14,8 @@ export function useCalculateShippingCostToCart({
 }) {
   return useQuery({
     queryKey: getCalculateShippingCostQueryKey(shippingAddressId, null),
-    queryFn: () =>
-      calculateShippingCost({ typeDataBase: "to-cart" }),
+    queryFn: () => calculateShippingCost({ typeDataBase: "to-cart" }),
+    staleTime: 60_000,
   });
 }
 
@@ -31,5 +30,6 @@ export function useCalculateShippingCostToDirect({
     queryKey: getCalculateShippingCostQueryKey(shippingAddressId, directBuyId),
     queryFn: () =>
       calculateShippingCost({ typeDataBase: "to-direct", directBuyId }),
+    staleTime: 60_000,
   });
 }

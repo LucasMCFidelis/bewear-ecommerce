@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useResolveCalculateShippingCostToCartOrDirect } from "@/hooks/queries/use-resolve-calculate-shipping-cost";
 import { cn } from "@/lib/utils";
 
-import { useShippingAddressContext } from "../address-context";
+import { useCartContext } from "../cart-context";
 
 export type ButtonGoToPaymentProps<
   TypeDataBase extends "to-cart" | "to-direct",
@@ -25,7 +25,7 @@ const ButtonGoToPayment = <TypeDataBase extends "to-cart" | "to-direct">({
   ...rest
 }: ButtonGoToPaymentProps<TypeDataBase>) => {
   const router = useRouter();
-  const { selectedShippingAddress } = useShippingAddressContext();
+  const { selectedShippingAddress } = useCartContext();
 
   const {
     isPending: isLoadingCalculateShippingCost,
